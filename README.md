@@ -1,2 +1,0 @@
-# FruitSlapper
-React Native Project
