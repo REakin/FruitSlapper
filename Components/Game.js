@@ -5,12 +5,44 @@ import {
     StyleSheet,
     Button
 } from 'react-native';
+import * as Google from "expo-google-app-auth";
 
 export default class Game extends Component {
+
     constructor(props) {
         super(props);
-
+        this.state = {
+            signedIn: false,
+            name: "",
+            photoUrl: ""
+        }
     }
+
+    signIn = async () => {
+        try {
+            const result = await Google.logInAsync({
+                androidClientId: "274067395902-2583lbt7gt6qpstvjn2v16pckdk0m7k4.apps.googleusercontent.com",
+                scopes: ["profile", "email"]
+            });
+
+            if (result.type === "success") {
+                console.log(result.user);
+                this.setState({
+                    signedIn: true,
+                    name: result.user.name,
+                    photoUrl: result.user.photoUrl
+                });
+                this.props.navigation.navigate('Home', {
+                    name: this.state.name,
+                    photoUrl: this.state.photoUrl,
+                });
+            } else {
+                console.log("cancelled")
+            }
+        } catch (e) {
+            console.log("error", e)
+        }
+    };
 
     render() {
         return (

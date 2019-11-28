@@ -19,12 +19,17 @@ export default class Splash extends Component {
     }
 
 
+    
+
+
     signIn = async () => {
         try {
             const result = await Google.logInAsync({
                 androidClientId: "274067395902-ci9bfd4okfcs3t0sl59q6eofjuh2pj5h.apps.googleusercontent.com",
                 scopes: ["profile", "email"]
             });
+
+            console.log(result)
 
             if (result.type === "success") {
                 console.log(result.user);
