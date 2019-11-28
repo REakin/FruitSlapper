@@ -21,7 +21,7 @@ export default class Game extends Component {
     signIn = async () => {
         try {
             const result = await Google.logInAsync({
-                androidClientId: "274067395902-bpdgr2n4tgm0u5qv2kl84934lsq5d5p7.apps.googleusercontent.com",
+                androidClientId: "274067395902-2583lbt7gt6qpstvjn2v16pckdk0m7k4.apps.googleusercontent.com",
                 scopes: ["profile", "email"]
             });
 
