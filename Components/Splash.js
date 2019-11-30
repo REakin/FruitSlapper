@@ -18,10 +18,6 @@ export default class Splash extends Component {
         }
     }
 
-
-    
-
-
     signIn = async () => {
         try {
             const result = await Google.logInAsync({
@@ -29,7 +25,7 @@ export default class Splash extends Component {
                 scopes: ["profile", "email"]
             });
 
-            console.log(result)
+            console.log(result);
 
             if (result.type === "success") {
                 console.log(result.user);
@@ -53,14 +49,14 @@ export default class Splash extends Component {
     render() {
         return (
             <View style={styles.container}>
-                {/* <Text style={styles.title}>Splash Screen!</Text>
+                 <Text style={styles.title}>Sugar Rush</Text>
                 <Button
                 style={styles.Button}
                 title={'Play'}
-                onPress={()=> this.props.navigation.navigate('Game')}/> */}
-                <Text style={styles.title}>Sign In With Google</Text>
+                onPress={()=> this.props.navigation.navigate('Game')}/>
+
                 <Button
-                    title="SIGN IN WITH GOOGLE"
+                    title="Log In"
                     onPress={() => this.signIn()}/>
             </View>
         );
@@ -82,13 +78,5 @@ const styles = StyleSheet.create({
         fontSize: 20,
         alignItems: 'center',
         justifyContent: 'center',
-    },
-    image: {
-        marginTop: 15,
-        width: 150,
-        height: 150,
-        borderColor: "rgba(0,0,0,0.2)",
-        borderWidth: 3,
-        borderRadius: 150
     }
 });
