@@ -5,7 +5,7 @@ import { createStackNavigator } from 'react-navigation-stack'
 
 import Splash from './Components/Splash'
 import Game from './Components/Game'
-import Draggable from './Components/Draggable'
+import Fruit from './Components/Fruit'
 
 const RootStack = createStackNavigator(
     {
@@ -16,7 +16,7 @@ const RootStack = createStackNavigator(
             screen: Game
         },
         Test: {
-            screen: Draggable
+            screen: Fruit
         }
     },
     {
