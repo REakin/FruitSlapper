@@ -1,53 +1,39 @@
-import React, { Component } from "react";
-import {
-  StyleSheet,
-  View,
-  PanResponder,
-  Animated
-} from "react-native";
-
-export default class Draggable extends Component {
-  constructor() {
-    super();
-    this.state = {
-      pan: new Animated.ValueXY()
-    };
-  }
-
-  componentWillMount() {
-    // Add a listener for the delta value change
-    this._val = { x:0, y:0 }
-    this.state.pan.addListener((value) => this._val = value);
-    // Initialize PanResponder with move handling
-    this.panResponder = PanResponder.create({
-      onStartShouldSetPanResponder: (e, gesture) => true,
-      onPanResponderMove: () => {Animated.event([
-        null, { dx: this.state.pan.x, dy: this.state.pan.y }
-      ])
-      // adjusting delta value
-      this.state.pan.setValue({ x:0, y:0})}
-    });
-  }
-
-  render() {
-    const panStyle = {
-      transform: this.state.pan.getTranslateTransform()
-    }
-    return (
-        <Animated.View
-          {...this.panResponder.panHandlers}
-          style={[panStyle, styles.circle]}
-        />
-    );
-  }
+//import liraries
+import React, { Component } from 'react';
+import { View, StyleSheet, PanResponder, Animated } from 'react-native';
+// create a component
+class Ball extends Component {
+   constructor(props) {
+      super(props);
+      const position = new Animated.ValueXY();
+      const panResponder = PanResponder.create({
+         onStartShouldSetPanResponder: () => true,
+         onPanResponderMove: (event, gesture) => {
+            position.setValue({ x: gesture.dx, y: gesture.dy });
+         }
+      });
+   
+      this.state = { panResponder, position };
+   }
+   render() {
+      let handles = this.state.panResponder.panHandlers;
+      return (
+         <Animated.View
+            style={[styles.ball, this.state.position.getLayout()]}
+            {...handles}
+         />
+      );
+   }
 }
-
-let CIRCLE_RADIUS = 30;
-let styles = StyleSheet.create({
-  circle: {
-    backgroundColor: "skyblue",
-    width: CIRCLE_RADIUS * 2,
-    height: CIRCLE_RADIUS * 2,
-    borderRadius: CIRCLE_RADIUS
-  }
+// define your styles
+const styles = StyleSheet.create({
+   ball: {
+      height: 80,
+      width: 80,
+      borderColor: 'black',
+      borderRadius: 40,
+      borderWidth: 40
+   },
 });
+//make this component available to the app
+export default Ball;
