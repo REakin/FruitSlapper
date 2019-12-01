@@ -18,7 +18,6 @@ export default class Splash extends Component {
             name: "",
             photoUrl: ""
         }
-
     }
 
 
@@ -49,11 +48,6 @@ export default class Splash extends Component {
     //         console.log("error", e)
     //     }
     // };
-
-
-
-
-
 
     render() {
         return (
@@ -146,13 +140,5 @@ const styles = StyleSheet.create({
         fontSize: 20,
         alignItems: 'center',
         justifyContent: 'center',
-    },
-    image: {
-        marginTop: 15,
-        width: 150,
-        height: 150,
-        borderColor: "rgba(0,0,0,0.2)",
-        borderWidth: 3,
-        borderRadius: 150
     }
 });
