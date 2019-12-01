@@ -55,7 +55,7 @@ export default class Splash extends Component {
             <ImageBackground source={require('../assets/Candy_assets/PNG/bg.png')} style={{ width: '100%', height: '100%'}}>
             <View style={styles.topContainer}>
                 
-                <TouchableOpacity onPress={() => this.props.navigation.navigate('Test')}>
+                <TouchableOpacity onPress={() => this.props.navigation.navigate('Fruit')}>
                     
                 {/* <Text style={styles.title}>Splash Screen!</Text>
                 <Button
