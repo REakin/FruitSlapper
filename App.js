@@ -1,27 +1,34 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, } from 'react-native';
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack'
 
 import Splash from './Components/Splash'
 import Game from './Components/Game'
+import Fruit from './Components/Fruit'
 
 const RootStack = createStackNavigator(
     {
-        Splash:{
-            screen:Splash
+        Splash: {
+            screen: Splash
         },
-        Game:{
-            screen:Game
+        Game: {
+            screen: Game
+        },
+        Test: {
+            screen: Fruit
         }
-    }
+    },
+    {
+        initialRouteName: 'Test',
+    },
 );
 
 const AppContainer = createAppContainer(RootStack);
 
 
 export default function App() {
-    return (<AppContainer/>);
+    return (<AppContainer />);
 }
 
 const styles = StyleSheet.create({
