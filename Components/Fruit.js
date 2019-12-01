@@ -16,7 +16,6 @@ export default class Fruit extends Component {
             onPanResponderRelease: (e, gesture) => {
                 console.log(gesture)
                 if (Math.abs(gesture.dx) > 100 || gesture.dy < -150) {
-                    let v = Math.abs(gesture.vx) > Math.abs(gesture.vy) ? Math.abs(gesture.vx) : Math.abs(gesture.vy)
                     Animated.decay(position, {
                         toValue: { x: gesture.dx * 500, y: gesture.dy * 500 },
                         velocity: { x: gesture.vx, y: gesture.vy }, 
