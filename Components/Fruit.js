@@ -16,7 +16,7 @@ export default class Fruit extends Component {
             onPanResponderRelease: (e, gesture) => {
                 console.log(gesture)
                 if (Math.abs(gesture.dx) > 100 || gesture.dy < -150) {
-                    Animated.timing(position, {
+                    Animated.decay(position, {
                         toValue: { x: gesture.dx * 500, y: gesture.dy * 500 },
                         duration: 1000
                     }).start();
