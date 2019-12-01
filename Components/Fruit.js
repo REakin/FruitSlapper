@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, PanResponder, Animated, Easing, Dimensions } from 'react-native';
-import Draggable from 'react-native-draggable';
+import { View, StyleSheet, PanResponder, Animated, Dimensions } from 'react-native';
 
 const { height, width } = Dimensions.get("window");
 
@@ -14,26 +13,32 @@ export default class Fruit extends Component {
                 position.setValue({ x: gesture.dx, y: gesture.dy });
             },
             onPanResponderRelease: (e, gesture) => {
-                console.log(gesture)
-                if (Math.abs(gesture.dx) > 100 || gesture.dy < -150) {
+                // console.log(gesture)
+                if (!this.state.firstSwipe || (Math.abs(gesture.dx) > 20 || Math.abs(gesture.dy) > 40)) {
                     Animated.decay(position, {
                         toValue: { x: gesture.dx * 500, y: gesture.dy * 500 },
-                        velocity: { x: gesture.vx, y: gesture.vy }, 
+                        velocity: { x: gesture.vx, y: gesture.vy },
                         deceleration: 0.99999999999
                     }).start();
+                    this.state.firstSwipe = false;
                 } else {
                     Animated.spring(position, {
                         toValue: { x: 0, y: 0 },
                         friction: 5
                     }).start();
                 }
+            },
+            onPanResponderGrant: (e, gesture) => {
+                this.state.position.setOffset(this.state.position.__getValue());
+                this.state.position.setValue({ x: 0, y: 0 });
             }
         });
 
         this.state = {
             panResponder,
             position,
-            opacity: 100
+            opacity: 100,
+            firstSwipe: true
         };
     }
     render() {
@@ -45,10 +50,10 @@ export default class Fruit extends Component {
                     {...handles}
                 /> */}
                 <Animated.Image
-                    source={require('../assets/Monster_assets/BASICO/1.png')}
+                    source={require('../assets/Candy_assets/PNG/ico/4.png')}
                     style={[styles.ball, this.state.position.getLayout(), { opacity: this.state.opacity }]}
                     {...handles}
-                    />
+                />
             </View>
         );
     }
@@ -65,7 +70,7 @@ const styles = StyleSheet.create({
         position: 'absolute', 
         left: 0, 
         right: 0, 
-        bottom: '10%', 
+        bottom: '80%', 
         justifyContent: 'center', 
         alignItems: 'center'
     }

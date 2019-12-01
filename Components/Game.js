@@ -6,24 +6,59 @@ import {
     Button,
     TouchableHighlight,
     TouchableOpacity,
-    ImageBackground
-} from 'react-native';
+    ImageBackground,
+    FlatList,
+    Image
+   } from 'react-native';
 import * as Google from "expo-google-app-auth";
+import Fruit from './Fruit';
+// import { FlatList } from 'react-native-gesture-handler';
+
 
 export default class Game extends Component {
     constructor(props) {
         super(props);
         this.state = {
             menu: true,
-            store:false
+            store:false,
+            skinList: [
+                    {
+                        image: require('../assets/Monster_assets/Skins/2.png'),
+                        price: 100,
+                        title: 'blue'
+                    },
+                    {
+                        image: require('../assets/Monster_assets/Skins/3.png'),
+                        price: 100,
+                        title: 'orange'
+                    },
+                    {
+                        image: require('../assets/Monster_assets/Skins/4.png'),
+                        price: 100,
+                        title: 'yellow'
+                    },
+                    {
+                        image: require('../assets/Monster_assets/Skins/5.png'),
+                        price: 300,
+                        title: 'purple'
+                    },
+                    {
+                        image: require('../assets/Monster_assets/Skins/6.png'),
+                        price: 300,
+                        title: 'green'
+                    },
+                    {
+                        image: require('../assets/Monster_assets/Skins/7.png'),
+                        price: 400,
+                        title: 'aqua'
+                    },
+            ]
         }
     }
 
     openMenu(){
         return(
             <View>
-                <Text>Menu</Text>
-
                 <TouchableOpacity
                         onPress={()=>this.setState({store:true})}
                         style={styles.Button}>
@@ -48,33 +83,67 @@ export default class Game extends Component {
     }
 
     startGame(){
-        this.setState({menu:false})
+        this.setState({menu:false, store:false})
+        
+        
     }
+
     endGame(){
         this.setState({menu:true})
     }
 
+
+   
+
     openStore(){
+
         return(
             <View style={styles.Store}>
                 <Text> Hello I am a Store</Text>
-                {/* <Button
-                    title={'Close Store'}
-                    onPress={this.closeStore.bind(this)}/> */}
 
+                <FlatList
+                    style={styles.skin_container}
+                    data={this.state.skinList}
+                    renderItem={({item}) =>
+                              <TouchableOpacity onPress={() => this.props.navigation.navigate('InfoScreen', {info: {item}})}>
+                                  <View style={styles.row}>
+
+                                      <Image
+                                          style={{
+                                              width: 50,
+                                              height: 50
+                                          }}
+                                          source={item.image}
+                                      />
+                                      <Text style={styles.text}> {item.title}</Text>
+                                      <Text style={styles.text}>Price: {item.price}</Text>
+
+
+                                  </View>
+
+                              </TouchableOpacity>
+                          }
+                    keyExtractor={item => item.title}
+                    />
+                
                 <TouchableOpacity
                         onPress={this.closeStore.bind(this)}
                         style={styles.Button}>
                         <Text style={styles.btnText}>Close Store</Text>
-                </TouchableOpacity>
+                    </TouchableOpacity>
 
-                    
+                {/* <TouchableOpacity
+                        onPress={this.closeStore.bind(this)}
+                        style={styles.Button}>
+                        <Text style={styles.btnText}>Close Store</Text>
+                </TouchableOpacity> */}
             </View>
         )
     }
     closeStore(){
         this.setState({store:false})
     }
+
 
     render() {
         var Menu = this.state.menu ? this.openMenu() : null;
@@ -85,11 +154,11 @@ export default class Game extends Component {
 
             <View style={styles.container}>
                 {Menu}
-                {Store}
+                
 
                 
 
-                <TouchableHighlight
+                {/* <TouchableHighlight
                         onPress={() => this.startGame()}
                         style={styles.Button}>
                         <Text style={styles.btnText}>Close Menu</Text>
@@ -99,7 +168,7 @@ export default class Game extends Component {
                         onPress={() => this.props.navigation.navigate('Splash')}
                         style={styles.Button}>
                         <Text style={styles.btnText}>Back</Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
                     
 
                 {/* <Button
@@ -111,8 +180,12 @@ export default class Game extends Component {
                     style={styles.Button}
                     title={'Close Menu'}
                     onPress={() => this.startGame()}/> */}
+                
+                <Fruit/>
+                {Store}
             </View>
             </ImageBackground>
+                
         )
     }
 }
@@ -123,13 +196,23 @@ const styles = StyleSheet.create({
         flexDirection:'column',
         justifyContent: 'center',
     },
+    skin_container: {
+        flex: 1,
+        marginTop: 50,
+        backgroundColor: '#F5FCFF',
+    },
     Store: {
         flex:1,
         position: 'absolute',
-        left:0,
-        top:0,
+        left: '10%',
+        top:'10%',
         opacity:0.8,
-        width:'100%'
+        width:'80%',
+        height: '80%',
+        backgroundColor: 'green',
+        borderWidth: 4,
+        borderColor: 'blue',
+        borderRadius: 10
     },
     title:{
         fontSize:25,
@@ -158,4 +241,18 @@ const styles = StyleSheet.create({
         flex: 1,
         resizeMode: 'cover', // or 'stretch'
       },
+      row: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        padding: 16,
+        borderColor: 'black',
+        borderWidth: 1,
+        margin: 2,
+        marginBottom: 3
+    },
+    text: {
+        fontSize: 24,
+        color: 'black'
+    }
+      
 });
