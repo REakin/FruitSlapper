@@ -3,7 +3,10 @@ import {
     View,
     Text,
     StyleSheet,
-    Button
+    Button,
+    TouchableHighlight,
+    TouchableOpacity,
+    ImageBackground
 } from 'react-native';
 import * as Google from "expo-google-app-auth";
 
@@ -20,12 +23,26 @@ export default class Game extends Component {
         return(
             <View>
                 <Text>Menu</Text>
-                <Button
+
+                <TouchableOpacity
+                        onPress={()=>this.setState({store:true})}
+                        style={styles.Button}>
+                        <Text style={styles.btnText}>Store</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                        onPress={this.startGame.bind(this)}
+                        style={styles.Button}>
+                        <Text style={styles.btnText}>Start</Text>
+                </TouchableOpacity>
+
+
+                {/* <Button
                     title={"Store"}
                     onPress={()=>this.setState({store:true})}/>
                 <Button
                     title={"Start"}
-                    onPress={this.startGame.bind(this)}/>
+                    onPress={this.startGame.bind(this)}/> */}
             </View>
         )
     }
@@ -41,9 +58,17 @@ export default class Game extends Component {
         return(
             <View style={styles.Store}>
                 <Text> Hello I am a Store</Text>
-                <Button
+                {/* <Button
                     title={'Close Store'}
-                    onPress={this.closeStore.bind(this)}/>
+                    onPress={this.closeStore.bind(this)}/> */}
+
+                <TouchableOpacity
+                        onPress={this.closeStore.bind(this)}
+                        style={styles.Button}>
+                        <Text style={styles.btnText}>Close Store</Text>
+                </TouchableOpacity>
+
+                    
             </View>
         )
     }
@@ -56,20 +81,38 @@ export default class Game extends Component {
         var Store = this.state.store ? this.openStore() : null;
 
         return (
+            <ImageBackground source={require('../assets/Candy_assets/PNG/bg.png')} style={styles.backgroundImage}>
+
             <View style={styles.container}>
                 {Menu}
                 {Store}
 
-                <Button
-                    style={styles.Button}
-                    title={'Close Menu'}
-                    onPress={() => this.startGame()}/>
+                
 
-                <Button
+                <TouchableHighlight
+                        onPress={() => this.startGame()}
+                        style={styles.Button}>
+                        <Text style={styles.btnText}>Close Menu</Text>
+                </TouchableHighlight>
+                
+                <TouchableOpacity
+                        onPress={() => this.props.navigation.navigate('Splash')}
+                        style={styles.Button}>
+                        <Text style={styles.btnText}>Back</Text>
+                </TouchableOpacity>
+                    
+
+                {/* <Button
                     style={styles.Button}
                     title={'Back'}
-                    onPress={() => this.props.navigation.navigate('Splash')}/>
+                    onPress={() => this.props.navigation.navigate('Splash')}/> */}
+
+                    {/* <Button
+                    style={styles.Button}
+                    title={'Close Menu'}
+                    onPress={() => this.startGame()}/> */}
             </View>
+            </ImageBackground>
         )
     }
 }
@@ -93,9 +136,26 @@ const styles = StyleSheet.create({
         textAlign:'center'
     },
     Button: {
-        height: 40,
-        fontSize: 20,
+        height: 60,
         alignItems: 'center',
         justifyContent: 'center',
-    }
+    },
+    
+    btnText: {
+        fontSize: 24,
+        opacity: 1,
+        backgroundColor: 'blue',
+        width: '57%',
+        color: 'black',
+        alignItems:'center',
+        justifyContent: 'center',
+        textAlign:'center',
+        borderColor: 'black',
+        borderRadius: 12,
+        borderWidth: 4,
+    },
+    backgroundImage: {
+        flex: 1,
+        resizeMode: 'cover', // or 'stretch'
+      },
 });

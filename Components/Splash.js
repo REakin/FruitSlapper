@@ -52,10 +52,10 @@ export default class Splash extends Component {
 
     render() {
         return (
-            <ImageBackground source={require('../assets/Candy_assets/PNG/bg.png')} style={{ width: '100%', height: '100%'}}>
+            <ImageBackground source={require('../assets/Candy_assets/PNG/bg.png')} style={styles.backgroundImage}>
             <View style={styles.topContainer}>
                 
-                <TouchableOpacity onPress={() => this.props.navigation.navigate('Test')}>
+                <TouchableOpacity onPress={() => this.props.navigation.navigate('Game')}>
                     
                 {/* <Text style={styles.title}>Splash Screen!</Text>
                 <Button
@@ -69,16 +69,7 @@ export default class Splash extends Component {
                     <Text style={styles.title}>Sweet<Text style={styles.title2}>T
                     <Image source={require('../assets/Candy_assets/PNG/ico/3.png')} style={styles.image}/>
                     <Image source={require('../assets/Candy_assets/PNG/ico/3.png')} style={styles.image}/>
-                    th</Text></Text>
-                    
-                    
-                    {/* <Button
-                    title="Play"
-                    onPress={() => this.props.navigation.navigate('Test')}/> */}
-                    <Button
-                    title="Menu"
-                    onPress={() => this.props.navigation.navigate('Game')}/>
-                    
+                    th</Text></Text>                   
 
                     <Text style={styles.press_start}>Press anywhere to start</Text>
                     
@@ -142,12 +133,25 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         flex: 1,
         marginTop: 50,
-        height: 400
     },
     Button: {
         height: 40,
         fontSize: 20,
         alignItems: 'center',
         justifyContent: 'center',
-    }
+    },
+    
+    btnText: {
+        fontSize: 24,
+        backgroundColor: 'blue',
+        opacity: 1,
+        width: '57%',
+        color: 'black',
+        alignItems:'center',
+        justifyContent: 'center',
+        textAlign:'center',
+        borderColor: 'black',
+        borderRadius: 12,
+        borderWidth: 4,
+    },
 });
