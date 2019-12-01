@@ -16,13 +16,10 @@ export default class Fruit extends Component {
             onPanResponderRelease: (e, gesture) => {
                 console.log(gesture)
                 if (Math.abs(gesture.dx) > 100 || gesture.dy < -150) {
-                    let v = Math.abs(gesture.vx) > Math.abs(gesture.vy) ? Math.abs(gesture.vx) : Math.abs(gesture.vy)
-                    Animated.decay(position, {
+                    Animated.timing(position, {
                         toValue: { x: gesture.dx * 500, y: gesture.dy * 500 },
-                        velocity: { x: gesture.vx, y: gesture.vy }, 
-                        deceleration: 0.99999999999
+                        duration: 1000
                     }).start();
-
                 } else {
                     Animated.spring(position, {
                         toValue: { x: 0, y: 0 },
@@ -42,10 +39,15 @@ export default class Fruit extends Component {
         let handles = this.state.panResponder.panHandlers;
         return (
             <View style={styles.container}>
-                <Animated.View
+                {/* <Animated.View
                     style={[styles.ball, this.state.position.getLayout(), { opacity: this.state.opacity }]}
                     {...handles}
-                />
+                /> */}
+                <Animated.Image
+                    source={require('../assets/Monster_assets/BASICO/1.png')}
+                    style={[styles.ball, this.state.position.getLayout(), { opacity: this.state.opacity }]}
+                    {...handles}
+                    />
             </View>
         );
     }
@@ -55,16 +57,15 @@ const styles = StyleSheet.create({
     ball: {
         height: 80,
         width: 80,
-        borderColor: 'black',
         borderRadius: 40,
         borderWidth: 40,
     },
     container: {
-        position: 'absolute',
-        left: 0,
-        right: 0,
-        bottom: '10%',
-        justifyContent: 'center',
+        position: 'absolute', 
+        left: 0, 
+        right: 0, 
+        bottom: '10%', 
+        justifyContent: 'center', 
         alignItems: 'center'
     }
 });
