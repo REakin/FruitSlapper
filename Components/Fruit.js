@@ -18,7 +18,8 @@ export default class Fruit extends Component {
                 if (Math.abs(gesture.dx) > 100 || gesture.dy < -150) {
                     Animated.decay(position, {
                         toValue: { x: gesture.dx * 500, y: gesture.dy * 500 },
-                        duration: 1000
+                        velocity: { x: gesture.vx, y: gesture.vy }, 
+                        deceleration: 0.99999999999
                     }).start();
                 } else {
                     Animated.spring(position, {
