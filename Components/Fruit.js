@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, PanResponder, Animated, Dimensions } from 'react-native';
+import { View, StyleSheet, PanResponder, Animated, Dimensions, Image } from 'react-native';
 
 const { height, width } = Dimensions.get("window");
 
@@ -39,6 +39,7 @@ export default class Fruit extends Component {
             position,
             opacity: 100,
             firstSwipe: true,
+            sprite: require('../assets/Monster_assets/Skins/1.png')
         };
     }
     
@@ -57,6 +58,8 @@ export default class Fruit extends Component {
                     style={[styles.ball, this.state.position.getLayout(), { opacity: this.state.opacity }]}
                     {...handles}
                 />
+                
+                
             </View>
         );
     }
@@ -69,6 +72,7 @@ const styles = StyleSheet.create({
         borderRadius: 40,
         borderWidth: 40,
     },
+    
     container: {
         position: 'absolute', 
         left: 0, 

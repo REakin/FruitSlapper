@@ -227,7 +227,7 @@ const styles = StyleSheet.create({
     btnText: {
         fontSize: 24,
         opacity: 1,
-        backgroundColor: 'blue',
+        backgroundColor: '#84BCE8',
         width: '57%',
         color: 'black',
         alignItems:'center',
