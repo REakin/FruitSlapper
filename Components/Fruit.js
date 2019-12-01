@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { View, StyleSheet, PanResponder, Animated, Easing, Dimensions } from 'react-native';
-import Draggable from 'react-native-draggable';
 
 const { height, width } = Dimensions.get("window");
 
@@ -70,37 +69,3 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     }
 });
-
-
-// export default class Fruit extends Component {
-//     constructor(props) {
-//         super(props);
-//         this.state = {
-//             source: 'http://pixdaus.com/files/items/pics/7/88/310788_b52a1fa4469034b12ef4bb7c8eff11c7_large.jpg'
-//         }
-//         this.showPos.bind(this)
-//     }
-
-
-//     showPos() {
-//         console.log(this.fruit.offsetX)
-//     }
-
-//     render() {
-//         console.log('imafruit')
-//         return (
-//             <Draggable
-//                 ref={ref => {
-//                     this.fruit = ref;
-//                 }}
-//                 renderSize={56}
-//                 renderColor="black"
-//                 offsetX={0}
-//                 offsetY={0}
-//                 renderText="A"
-//                 pressDrag={() => alert('touched!!')}
-//                 pressDragRelease={this.showPos}
-//             />
-//         );
-//     }
-// }
