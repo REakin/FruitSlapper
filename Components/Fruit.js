@@ -16,10 +16,12 @@ export default class Fruit extends Component {
             onPanResponderRelease: (e, gesture) => {
                 console.log(gesture)
                 if (Math.abs(gesture.dx) > 100 || gesture.dy < -150) {
-                    Animated.timing(position, {
+                    Animated.decay(position, {
                         toValue: { x: gesture.dx * 500, y: gesture.dy * 500 },
-                        duration: 1000
+                        velocity: { x: gesture.vx, y: gesture.vy }, 
+                        deceleration: 0.99999999999
                     }).start();
+
                 } else {
                     Animated.spring(position, {
                         toValue: { x: 0, y: 0 },
@@ -57,11 +59,11 @@ const styles = StyleSheet.create({
         borderWidth: 40,
     },
     container: {
-        position: 'absolute', 
-        left: 0, 
-        right: 0, 
-        bottom: '10%', 
-        justifyContent: 'center', 
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        bottom: '10%',
+        justifyContent: 'center',
         alignItems: 'center'
     }
 });
