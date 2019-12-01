@@ -43,6 +43,8 @@ export default class Fruit extends Component {
     }
     render() {
         let handles = this.state.panResponder.panHandlers;
+
+
         return (
             <View style={styles.container}>
                 {/* <Animated.View
@@ -50,7 +52,7 @@ export default class Fruit extends Component {
                     {...handles}
                 /> */}
                 <Animated.Image
-                    source={require('../assets/Candy_assets/PNG/ico/4.png')}
+                    source={require('../assets/Candy_assets/PNG/ico/3.png')}
                     style={[styles.ball, this.state.position.getLayout(), { opacity: this.state.opacity }]}
                     {...handles}
                 />
