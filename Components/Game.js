@@ -8,52 +8,69 @@ import {
 import * as Google from "expo-google-app-auth";
 
 export default class Game extends Component {
-
     constructor(props) {
         super(props);
         this.state = {
-            signedIn: false,
-            name: "",
-            photoUrl: ""
+            menu: true,
+            store:false
         }
     }
 
-    signIn = async () => {
-        try {
-            const result = await Google.logInAsync({
-                androidClientId: "274067395902-bpdgr2n4tgm0u5qv2kl84934lsq5d5p7.apps.googleusercontent.com",
-                scopes: ["profile", "email"]
-            });
+    openMenu(){
+        return(
+            <View>
+                <Text>Menu</Text>
+                <Button
+                    title={"Store"}
+                    onPress={()=>this.setState({store:true})}/>
+                <Button
+                    title={"Start"}
+                    onPress={this.startGame.bind(this)}/>
+            </View>
+        )
+    }
 
-            if (result.type === "success") {
-                console.log(result.user);
-                this.setState({
-                    signedIn: true,
-                    name: result.user.name,
-                    photoUrl: result.user.photoUrl
-                });
-                this.props.navigation.navigate('Home', {
-                    name: this.state.name,
-                    photoUrl: this.state.photoUrl,
-                });
-            } else {
-                console.log("cancelled")
-            }
-        } catch (e) {
-            console.log("error", e)
-        }
-    };
+    startGame(){
+        this.setState({menu:false})
+    }
+    endGame(){
+        this.setState({menu:true})
+    }
+
+    openStore(){
+        return(
+            <View style={styles.Store}>
+                <Text> Hello I am a Store</Text>
+                <Button
+                    title={'Close Store'}
+                    onPress={this.closeStore.bind(this)}/>
+            </View>
+        )
+    }
+    closeStore(){
+        this.setState({store:false})
+    }
 
     render() {
+        var Menu = this.state.menu ? this.openMenu() : null;
+        var Store = this.state.store ? this.openStore() : null;
+
         return (
             <View style={styles.container}>
-                <Text style={styles.title}>Game Screen!</Text>
+                {Menu}
+                {Store}
+
+                <Button
+                    style={styles.Button}
+                    title={'Close Menu'}
+                    onPress={() => this.startGame()}/>
+
                 <Button
                     style={styles.Button}
                     title={'Back'}
-                    onPress={()=> this.props.navigation.navigate('Splash')}/>
+                    onPress={() => this.props.navigation.navigate('Splash')}/>
             </View>
-        );
+        )
     }
 }
 
@@ -62,6 +79,14 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection:'column',
         justifyContent: 'center',
+    },
+    Store: {
+        flex:1,
+        position: 'absolute',
+        left:0,
+        top:0,
+        opacity:0.8,
+        width:'100%'
     },
     title:{
         fontSize:25,

@@ -5,7 +5,8 @@ import {
     StyleSheet,
     Button,
     TouchableOpacity, 
-    ImageBackground
+    ImageBackground,
+    Image
 } from 'react-native';
 import * as Google from "expo-google-app-auth";
 import PropTypes from 'prop-types';
@@ -18,7 +19,6 @@ export default class Splash extends Component {
             name: "",
             photoUrl: ""
         }
-
     }
 
 
@@ -50,17 +50,12 @@ export default class Splash extends Component {
     //     }
     // };
 
-
-
-
-
-
     render() {
         return (
             <ImageBackground source={require('../assets/Candy_assets/PNG/bg.png')} style={{ width: '100%', height: '100%'}}>
             <View style={styles.topContainer}>
                 
-                <TouchableOpacity onPress={() => this.props.navigation.navigate('Test')}>
+                <TouchableOpacity onPress={() => this.props.navigation.navigate('Fruit')}>
                     
                 {/* <Text style={styles.title}>Splash Screen!</Text>
                 <Button
@@ -71,13 +66,17 @@ export default class Splash extends Component {
                 {/* <Button
                     title="SIGN IN WITH GOOGLE"
                     onPress={() => this.signIn()}/> */}
-                    <Text style={styles.title}>Sweet<Text style={styles.title2}>Tooth</Text></Text>
+                    <Text style={styles.title}>Sweet<Text style={styles.title2}>T
+                    <Image source={require('../assets/Candy_assets/PNG/ico/3.png')} style={styles.image}/>
+                    <Image source={require('../assets/Candy_assets/PNG/ico/3.png')} style={styles.image}/>
+                    th</Text></Text>
                     
+                    
+                    {/* <Button
+                    title="Play"
+                    onPress={() => this.props.navigation.navigate('Test')}/> */}
                     <Button
-                    title="Drag"
-                    onPress={() => this.props.navigation.navigate('Test')}/>
-                    <Button
-                    title="Game"
+                    title="Menu"
                     onPress={() => this.props.navigation.navigate('Game')}/>
                     
 
@@ -97,6 +96,10 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection:'column',
         justifyContent: 'center',
+    },
+    image: {
+        height: 40,
+        width: 40,
     },
     press_start: {
         fontSize:60,
@@ -146,13 +149,5 @@ const styles = StyleSheet.create({
         fontSize: 20,
         alignItems: 'center',
         justifyContent: 'center',
-    },
-    image: {
-        marginTop: 15,
-        width: 150,
-        height: 150,
-        borderColor: "rgba(0,0,0,0.2)",
-        borderWidth: 3,
-        borderRadius: 150
     }
 });
