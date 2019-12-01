@@ -38,9 +38,10 @@ export default class Fruit extends Component {
             panResponder,
             position,
             opacity: 100,
-            firstSwipe: true
+            firstSwipe: true,
         };
     }
+    
     render() {
         let handles = this.state.panResponder.panHandlers;
 
