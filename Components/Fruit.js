@@ -11,6 +11,7 @@ export default class Fruit extends Component {
             onStartShouldSetPanResponder: () => true,
             onPanResponderMove: (event, gesture) => {
                 position.setValue({ x: gesture.dx, y: gesture.dy });
+                // console.log(gesture.moveX)
             },
             onPanResponderRelease: (e, gesture) => {
                 // console.log(gesture)
@@ -41,6 +42,7 @@ export default class Fruit extends Component {
             firstSwipe: true
         };
     }
+
     render() {
         let handles = this.state.panResponder.panHandlers;
         return (
