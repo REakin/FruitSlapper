@@ -45,7 +45,7 @@ export default class Fruit extends Component {
                     {...handles}
                 /> */}
                 <Animated.Image
-                    source={require('../assets/Monster_assets/BASICO/1.png')}
+                    source={require('../assets/Candy_assets/PNG/ico/4.png')}
                     style={[styles.ball, this.state.position.getLayout(), { opacity: this.state.opacity }]}
                     {...handles}
                     />
@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
         position: 'absolute', 
         left: 0, 
         right: 0, 
-        bottom: '10%', 
+        bottom: '80%', 
         justifyContent: 'center', 
         alignItems: 'center'
     }

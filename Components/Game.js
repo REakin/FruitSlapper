@@ -6,6 +6,8 @@ import {
     Button
 } from 'react-native';
 import * as Google from "expo-google-app-auth";
+import Fruit from './Fruit';
+
 
 export default class Game extends Component {
     constructor(props) {
@@ -31,8 +33,11 @@ export default class Game extends Component {
     }
 
     startGame(){
-        this.setState({menu:false})
+        this.setState({menu:false, store:false})
+        
+        
     }
+
     endGame(){
         this.setState({menu:true})
     }
@@ -59,17 +64,8 @@ export default class Game extends Component {
             <View style={styles.container}>
                 {Menu}
                 {Store}
-
-                <Button
-                    style={styles.Button}
-                    title={'Close Menu'}
-                    onPress={() => this.startGame()}/>
-
-                <Button
-                    style={styles.Button}
-                    title={'Back'}
-                    onPress={() => this.props.navigation.navigate('Splash')}/>
-            </View>
+                <Fruit/>
+                </View>
         )
     }
 }
