@@ -1,14 +1,15 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, Button } from 'react-native';
 import * as Google from "expo-google-app-auth";
-import {Fruit, Bad_Fruit} from './Fruit';
+import Fruit, {Bad_Fruit} from './Fruit';
 
 
 export default class Game extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            fruit:false,
+            candy:false,
+            bad_candy:false,
             menu: true,
             store:false,
             hand:false,
@@ -18,14 +19,10 @@ export default class Game extends Component {
         this.handlePositionChange = this.positionChange.bind(this)
     }
     positionChange(x,y,value){
-        console.log(x)
-        console.log(y)
         if (y>10){
-            console.log('Take');
             this.takeCandy(value);
         }else{
-            this.takeCandy(value);
-            console.log('Reject');
+            this.rejectCandy();
         }
     }
 
@@ -44,33 +41,48 @@ export default class Game extends Component {
     }
 
     startGame(){
-        this.setState({menu:false, store:false, fruit:true, hand:true, score:0, opentimer:5000, candyPic:'',})
+        this.setState({menu:false, store:false, candy:false, bad_candy:false, hand:true, score:0, opentimer:2000, candyPic:'',
+            timer:setTimeout(this.openHand.bind(this),((Math.random() * 15) + 1)*1000)})
     }
 
     takeCandy(type){
+        clearTimeout(this.state.closeTimer)
         if(type){
-            this.state.score +=1;
-            this.Reset()
+            this.setState({score:this.state.score+1});
+            this.reset()
         }else{
             this.endGame()
         }
     }
 
     rejectCandy(){
-        this.resetpositon()
+        this.reset()
     }
+
     openHand(){
-
+        if (Math.random() >=.2){
+            this.setState({candy:true})
+        }else{
+            this.setState({bad_candy:true})
+        }
+        this.setState({closeTimer:setTimeout(this.closeHand.bind(this),this.state.opentimer)})
     }
+
     closeHand(){
-
+        //todo some animation
+        this.endGame()
     }
-    Reset(){
-        this.setState({fruit:false,hand:false})
 
+    reset(){
+        this.setState({candy:false, bad_candy:false, hand:false})
+        clearTimeout(this.state.closeTimer)
+        clearTimeout(this.state.timer)
+        this.setState({timer:setTimeout(this.openHand.bind(this),((Math.random() * 15) + 1)*1000)})
     }
+
     endGame(){
-        this.setState({menu:true, fruit:false})
+        this.setState({menu:true, candy:false, bad_candy:false})
+        //todo Send data save HS  and all that jazz
     }
 
     openStore(){
@@ -90,14 +102,15 @@ export default class Game extends Component {
     render() {
         var Menu = this.state.menu ? this.openMenu() : null;
         var Store = this.state.store ? this.openStore() : null;
-        var Candy = this.state.fruit ? <Fruit positionChange={this.handlePositionChange}/> : null;
-        var hand = this.state.hand ? <View style={{height:10,width:10, backgroundColor:'white'}}/> : <View style={{height:10,width:10, backgroundColor:'black'}}/>
+        var Candy = this.state.candy ? <Fruit positionChange={this.handlePositionChange}/> : null;
+        var Bad_Candy = this.state.bad_candy ? <Bad_Fruit positionChange={this.handlePositionChange}/> : null;
+        var Hand = this.state.hand ? <View style={{height:50,width:50, backgroundColor:'white'}}/> : <View style={{height:10,width:10, backgroundColor:'black'}}/>
         return (
             <View style={styles.container}>
-                <Text>{this.state.xval}</Text>
-                <Text>{this.state.yval}</Text>
-                {hand}
+                <Text>{this.state.score}</Text>
+                {Hand}
                 {Candy}
+                {Bad_Candy}
                 {Menu}
                 {Store}
             </View>
@@ -118,15 +131,5 @@ const styles = StyleSheet.create({
         top:0,
         opacity:0.8,
         width:'100%'
-    },
-    title:{
-        fontSize:25,
-        textAlign:'center'
-    },
-    Button: {
-        height: 40,
-        fontSize: 20,
-        alignItems: 'center',
-        justifyContent: 'center',
     }
 });

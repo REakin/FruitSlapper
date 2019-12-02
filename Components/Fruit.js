@@ -110,7 +110,7 @@ export class Bad_Fruit extends Component {
                     {...handles}
                 /> */}
                 <Animated.Image
-                    source={require('../assets/Candy_assets/PNG/ico/4.png')}
+                    source={require('../assets/Candy_assets/PNG/ico/6.png')}
                     style={[styles.ball, this.state.position.getLayout(), { opacity: this.state.opacity }]}
                     {...handles}
                 />
@@ -127,11 +127,11 @@ const styles = StyleSheet.create({
         borderWidth: 40,
     },
     container: {
-        position: 'absolute', 
-        left: 0, 
-        right: 0, 
-        bottom: '80%', 
-        justifyContent: 'center', 
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        bottom: '80%',
+        justifyContent: 'center',
         alignItems: 'center'
     }
 });
