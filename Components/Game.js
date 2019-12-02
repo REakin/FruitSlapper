@@ -73,7 +73,7 @@ export default class Game extends Component {
 
     startGame(){
         this.setState({menu:false, store:false, candy:false, bad_candy:false, hand:true, score:0, opentimer:2000, candyPic:'',
-            timer:setTimeout(this.openHand.bind(this),((Math.random() * 15) + 1)*1000)})
+            timer:setTimeout(this.openHand.bind(this),((Math.random() * 10) + 1)*1000)})
     }
 
     takeCandy(type){
@@ -108,7 +108,7 @@ export default class Game extends Component {
         this.setState({candy:false, bad_candy:false, hand:false})
         clearTimeout(this.state.closeTimer)
         clearTimeout(this.state.timer)
-        this.setState({timer:setTimeout(this.openHand.bind(this),((Math.random() * 15) + 1)*1000)})
+        this.setState({timer:setTimeout(this.openHand.bind(this),((Math.random() * 10) + 1)*1000)})
     }
 
     endGame(){
