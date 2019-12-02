@@ -10,11 +10,13 @@ import {
     FlatList,
     Image
    } from 'react-native';
-import * as Google from "expo-google-app-auth";
-import Fruit from './Fruit';
+
+
 // import { FlatList } from 'react-native-gesture-handler';
 import { db } from '../db'
 import { ListSkins } from '../services/ServiceInterface'
+
+import Fruit, {Bad_Fruit} from './Fruit';
 
 let skinRef = db.ref('/Skins');
 
@@ -22,10 +24,23 @@ export default class Game extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            candy:false,
+            bad_candy:false,
             menu: true,
             store:false,
-            skins: []
+            skins: [],
 
+            hand:false,
+            bgPic:'',
+            handpic:''
+        }
+        this.handlePositionChange = this.positionChange.bind(this)
+    }
+    positionChange(x,y,value){
+        if (y>10){
+            this.takeCandy(value);
+        }else{
+            this.rejectCandy();
         }
     }
     
@@ -38,13 +53,7 @@ export default class Game extends Component {
                         style={styles.Button}>
                         <Text style={styles.btnText}>Store</Text>
                 </TouchableOpacity>
-                <TouchableOpacity
-                        onPress={() => ListSkins()}
-                        style={styles.Button}>
-
-                     <Text style={styles.btnText}>Gen Store</Text>
-                </TouchableOpacity>
-
+               
                 <TouchableOpacity
                         onPress={this.startGame.bind(this)}
                         style={styles.Button}>
@@ -63,13 +72,48 @@ export default class Game extends Component {
     }
 
     startGame(){
-        this.setState({menu:false, store:false})
-        
-        
+        this.setState({menu:false, store:false, candy:false, bad_candy:false, hand:true, score:0, opentimer:2000, candyPic:'',
+            timer:setTimeout(this.openHand.bind(this),((Math.random() * 15) + 1)*1000)})
+    }
+
+    takeCandy(type){
+        clearTimeout(this.state.closeTimer)
+        if(type){
+            this.setState({score:this.state.score+1});
+            this.reset()
+        }else{
+            this.endGame()
+        }
+    }
+
+    rejectCandy(){
+        this.reset()
+    }
+
+    openHand(){
+        if (Math.random() >=.2){
+            this.setState({candy:true})
+        }else{
+            this.setState({bad_candy:true})
+        }
+        this.setState({closeTimer:setTimeout(this.closeHand.bind(this),this.state.opentimer)})
+    }
+
+    closeHand(){
+        //todo some animation
+        this.endGame()
+    }
+
+    reset(){
+        this.setState({candy:false, bad_candy:false, hand:false})
+        clearTimeout(this.state.closeTimer)
+        clearTimeout(this.state.timer)
+        this.setState({timer:setTimeout(this.openHand.bind(this),((Math.random() * 15) + 1)*1000)})
     }
 
     endGame(){
-        this.setState({menu:true})
+        this.setState({menu:true, candy:false, bad_candy:false})
+        //todo Send data save HS  and all that jazz
     }
 
 
@@ -149,44 +193,21 @@ export default class Game extends Component {
     render() {
         var Menu = this.state.menu ? this.openMenu() : null;
         var Store = this.state.store ? this.openStore() : null;
-
+        var Candy = this.state.candy ? <Fruit positionChange={this.handlePositionChange}/> : null;
+        var Bad_Candy = this.state.bad_candy ? <Bad_Fruit positionChange={this.handlePositionChange}/> : null;
+        var Hand = this.state.hand ? <View style={{height:50,width:50, backgroundColor:'white'}}/> : <View style={{height:10,width:10, backgroundColor:'black'}}/>
         return (
             <ImageBackground source={require('../assets/Candy_assets/PNG/bg.png')} style={styles.backgroundImage}>
 
             <View style={styles.container}>
+                <Text>{this.state.score}</Text>
+                {Hand}
+                {Candy}
+                {Bad_Candy}
                 {Menu}
-                
-
-                
-
-                {/* <TouchableHighlight
-                        onPress={() => this.startGame()}
-                        style={styles.Button}>
-                        <Text style={styles.btnText}>Close Menu</Text>
-                </TouchableHighlight>
-                
-                <TouchableOpacity
-                        onPress={() => this.props.navigation.navigate('Splash')}
-                        style={styles.Button}>
-                        <Text style={styles.btnText}>Back</Text>
-                </TouchableOpacity> */}
-                    
-
-                {/* <Button
-                    style={styles.Button}
-                    title={'Back'}
-                    onPress={() => this.props.navigation.navigate('Splash')}/> */}
-
-                    {/* <Button
-                    style={styles.Button}
-                    title={'Close Menu'}
-                    onPress={() => this.startGame()}/> */}
-                
-                <Fruit/>
                 {Store}
             </View>
             </ImageBackground>
-                
         )
     }
 }
