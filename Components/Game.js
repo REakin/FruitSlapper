@@ -13,7 +13,10 @@ import {
 import * as Google from "expo-google-app-auth";
 import Fruit from './Fruit';
 // import { FlatList } from 'react-native-gesture-handler';
+import { db } from '../db'
+import { ListSkins } from '../services/ServiceInterface'
 
+let skinRef = db.ref('/Skins');
 
 export default class Game extends Component {
     constructor(props) {
@@ -21,40 +24,11 @@ export default class Game extends Component {
         this.state = {
             menu: true,
             store:false,
-            skinList: [
-                    {
-                        image: require('../assets/Monster_assets/Skins/2.png'),
-                        price: 100,
-                        title: 'blue'
-                    },
-                    {
-                        image: require('../assets/Monster_assets/Skins/3.png'),
-                        price: 100,
-                        title: 'orange'
-                    },
-                    {
-                        image: require('../assets/Monster_assets/Skins/4.png'),
-                        price: 100,
-                        title: 'yellow'
-                    },
-                    {
-                        image: require('../assets/Monster_assets/Skins/5.png'),
-                        price: 300,
-                        title: 'purple'
-                    },
-                    {
-                        image: require('../assets/Monster_assets/Skins/6.png'),
-                        price: 300,
-                        title: 'green'
-                    },
-                    {
-                        image: require('../assets/Monster_assets/Skins/7.png'),
-                        price: 400,
-                        title: 'aqua'
-                    },
-            ]
+            skins: []
+
         }
     }
+    
 
     openMenu(){
         return(
@@ -63,6 +37,12 @@ export default class Game extends Component {
                         onPress={()=>this.setState({store:true})}
                         style={styles.Button}>
                         <Text style={styles.btnText}>Store</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                        onPress={() => ListSkins()}
+                        style={styles.Button}>
+
+                     <Text style={styles.btnText}>Gen Store</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
@@ -93,21 +73,42 @@ export default class Game extends Component {
     }
 
 
+    componentDidMount() {
+        
+
+        skinRef.on('value', (snapshot) => {
+
+            let data = snapshot.val();
+            //console.log(data);
+            //let skins = Object.value(data);
+            //console.log(skins);
+            this.setState({skins: data});
+            console.log(this.state.skins)
+        })
+    }
+
+
    
 
     openStore(){
+        
 
         return(
             <View style={styles.Store}>
                 <Text> Hello I am a Store</Text>
 
+
+
                 <FlatList
                     style={styles.skin_container}
-                    data={this.state.skinList}
+                    data={this.state.skins}
+                    extraData={this.state}
                     renderItem={({item}) =>
+
+
                               <TouchableOpacity onPress={() => this.props.navigation.navigate('InfoScreen', {info: {item}})}>
                                   <View style={styles.row}>
-
+                                        
                                       <Image
                                           style={{
                                               width: 50,
