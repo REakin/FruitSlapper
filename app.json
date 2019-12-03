@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Sweet Tooth",
+    "name": "SweetTooth",
     "slug": "SweetTooth",
     "privacy": "public",
     "sdkVersion": "35.0.0",
@@ -17,8 +17,8 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "android":{
-      "package":"com.sugar.elephantofdevelopment"
+    "android": {
+      "package": "com.sugar.elephantofdevelopment"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -28,6 +28,8 @@
     ],
     "ios": {
       "supportsTablet": true
-    }
+    },
+    "description": "",
+    "githubUrl": "https://github.com/REakin/SweetTooth"
   }
 }
