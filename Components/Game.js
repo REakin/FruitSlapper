@@ -9,14 +9,14 @@ import {
     ImageBackground,
     FlatList,
     Image
-   } from 'react-native';
-
+} from 'react-native';
+import { Audio } from 'expo-av';
 
 // import { FlatList } from 'react-native-gesture-handler';
 import { db } from '../db'
 import { ListSkins } from '../services/ServiceInterface'
 
-import Fruit, {Bad_Fruit} from './Fruit';
+import Fruit, { Bad_Fruit } from './Fruit';
 
 let PlayerRef = db.ref('/Player');
 
@@ -24,10 +24,10 @@ export default class Game extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            candy:false,
-            bad_candy:false,
+            candy: false,
+            bad_candy: false,
             menu: true,
-            store:false,
+            store: false,
             skins: [],
             asset_store: [require("../assets/Monster_assets/Skins/1.png"), require("../assets/Monster_assets/Skins/2.png"),
                           require("../assets/Monster_assets/Skins/3.png"), require("../assets/Monster_assets/Skins/4.png"),
@@ -38,33 +38,35 @@ export default class Game extends Component {
             handpic:'',
             current_skin: require("../assets/Monster_assets/Skins/1.png"),
             character_visible: 0,
-            cur_money: 0
-
+            cur_money: 0,
+            bgMusic: require('../assets/Music_assets/Loops/intro.wav'),
+            playingMusic: {},
+            sfx: 'put require paths here',
         }
         this.handlePositionChange = this.positionChange.bind(this)
     }
-    positionChange(x,y,value){
-        if (y>10){
+    positionChange(x, y, value) {
+        if (y > 10) {
             this.takeCandy(value);
-        }else{
+        } else {
             this.rejectCandy();
         }
     }
-    
 
-    openMenu(){
-        return(
+
+    openMenu() {
+        return (
             <View>
                 <TouchableOpacity
-                        onPress={()=>this.setState({store:true})}
-                        style={styles.Button}>
-                        <Text style={styles.btnText}>Store</Text>
+                    onPress={() => this.setState({ store: true })}
+                    style={styles.Button}>
+                    <Text style={styles.btnText}>Store</Text>
                 </TouchableOpacity>
-               
+
                 <TouchableOpacity
-                        onPress={this.startGame.bind(this)}
-                        style={styles.Button}>
-                        <Text style={styles.btnText}>Start</Text>
+                    onPress={this.startGame.bind(this)}
+                    style={styles.Button}>
+                    <Text style={styles.btnText}>Start</Text>
                 </TouchableOpacity>
 
 
@@ -84,39 +86,39 @@ export default class Game extends Component {
             timer:setTimeout(this.openHand.bind(this),((Math.random() * 10) + 1)*1000)})
     }
 
-    takeCandy(type){
+    takeCandy(type) {
         clearTimeout(this.state.closeTimer)
-        if(type){
-            this.setState({score:this.state.score+1});
+        if (type) {
+            this.setState({ score: this.state.score + 1 });
             this.reset()
-        }else{
+        } else {
             this.endGame()
         }
     }
 
-    rejectCandy(){
+    rejectCandy() {
         this.reset()
     }
 
-    openHand(){
-        if (Math.random() >=.2){
-            this.setState({candy:true})
-        }else{
-            this.setState({bad_candy:true})
+    openHand() {
+        if (Math.random() >= .2) {
+            this.setState({ candy: true })
+        } else {
+            this.setState({ bad_candy: true })
         }
-        this.setState({closeTimer:setTimeout(this.closeHand.bind(this),this.state.opentimer)})
+        this.setState({ closeTimer: setTimeout(this.closeHand.bind(this), this.state.opentimer) })
     }
 
-    closeHand(){
+    closeHand() {
         //todo some animation
         this.endGame()
     }
 
-    reset(){
-        this.setState({candy:false, bad_candy:false, hand:false})
+    reset() {
+        this.setState({ candy: false, bad_candy: false, hand: false })
         clearTimeout(this.state.closeTimer)
         clearTimeout(this.state.timer)
-        this.setState({timer:setTimeout(this.openHand.bind(this),((Math.random() * 10) + 1)*1000)})
+        this.setState({ timer: setTimeout(this.openHand.bind(this), ((Math.random() * 10) + 1) * 1000) })
     }
 
     endGame(){
@@ -129,29 +131,53 @@ export default class Game extends Component {
         //todo Send data save HS  and all that jazz
     }
 
+    playMusic = async (requirePath) => {
+        const soundObject = new Audio.Sound();
+        try {
+            await soundObject.loadAsync(requirePath);
+            await soundObject.setIsLoopingAsync(true);
+            await soundObject.playAsync();
+            this.setState({
+                playingMusic: soundObject
+            })
+            // Your sound is playing!
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    playSFX = async (requirePath) => {
+        const soundObject = new Audio.Sound();
+        try {
+            await soundObject.loadAsync(requirePath);
+            await soundObject.playAsync();
+            
+            // Your sound is playing!
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
 
     purchase(new_bal, skin_to_buy){
         
-        this.setState({cur_money: new_bal})
-        console.log(this.state.cur_money)
+        this.setState({cur_money: new_bal});
+        console.log(this.state.cur_money);
 
         db.ref('/Player/1/Cash').update({
             money: new_bal
         });
-        
 
         console.log(this.state.cur_money)
         
         db.ref(`/Player/0/Skins/${skin_to_buy}`).update({
             owned: true
         });
-
-    }
-
+        }
+        
 
     componentDidMount() {
-
+        this.playMusic(this.state.bgMusic)
         db.ref('/Player/1/Cash').on('value', (snapshot) => {
             let data = snapshot.val();
             this.setState({cur_money: data.money})
@@ -160,19 +186,22 @@ export default class Game extends Component {
         PlayerRef.on('value', (snapshot) => {
             let data = snapshot.val();
             var num_items = data[0].Skins.length;
-            for(i=0; i < num_items; i++) {
-                var imageKey = this.state.asset_store[i]
+            for(let i=0; i < num_items; i++) {
+                var imageKey = this.state.asset_store[i];
                 data[0].Skins[i].image = imageKey
             }
             this.setState({skins: data[0].Skins});
+            //console.log(data);
+            //let skins = Object.value(data);
+            //console.log(skins);
+            console.log(this.state.skins)
         })
+
     }
 
-   
+    openStore() {
 
-    openStore(){
-
-        return(
+        return (
             <View style={styles.Store}>
                 <Text> Hello I am a Store</Text>
                 <Text>Current Balance: ${this.state.cur_money}</Text>
@@ -256,10 +285,10 @@ export default class Game extends Component {
                     
                 
                 <TouchableOpacity
-                        onPress={this.closeStore.bind(this)}
-                        style={styles.Button}>
-                        <Text style={styles.btnText}>Close Store</Text>
-                    </TouchableOpacity>
+                    onPress={this.closeStore.bind(this)}
+                    style={styles.Button}>
+                    <Text style={styles.btnText}>Close Store</Text>
+                </TouchableOpacity>
 
                 {/* <TouchableOpacity
                         onPress={this.closeStore.bind(this)}
@@ -270,17 +299,17 @@ export default class Game extends Component {
             
         )
     }
-    closeStore(){
-        this.setState({store:false})
+    closeStore() {
+        this.setState({ store: false })
     }
 
 
     render() {
         var Menu = this.state.menu ? this.openMenu() : null;
         var Store = this.state.store ? this.openStore() : null;
-        var Candy = this.state.candy ? <Fruit positionChange={this.handlePositionChange}/> : null;
-        var Bad_Candy = this.state.bad_candy ? <Bad_Fruit positionChange={this.handlePositionChange}/> : null;
-        var Hand = this.state.hand ? <View style={{height:50,width:50, backgroundColor:'white'}}/> : <View style={{height:10,width:10, backgroundColor:'black'}}/>
+        var Candy = this.state.candy ? <Fruit positionChange={this.handlePositionChange} /> : null;
+        var Bad_Candy = this.state.bad_candy ? <Bad_Fruit positionChange={this.handlePositionChange} /> : null;
+        var Hand = this.state.hand ? <View style={{ height: 50, width: 50, backgroundColor: 'white' }} /> : <View style={{ height: 10, width: 10, backgroundColor: 'black' }} />
         return (
             <ImageBackground source={require('../assets/Candy_assets/PNG/bg.png')} style={styles.backgroundImage}>
 
@@ -314,7 +343,7 @@ export default class Game extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        flexDirection:'column',
+        flexDirection: 'column',
         justifyContent: 'center',
     },
     skin_container: {
@@ -323,37 +352,37 @@ const styles = StyleSheet.create({
         backgroundColor: '#F5FCFF',
     },
     Store: {
-        flex:1,
+        flex: 1,
         position: 'absolute',
         left: '10%',
-        top:'10%',
-        opacity:0.8,
-        width:'80%',
+        top: '10%',
+        opacity: 0.8,
+        width: '80%',
         height: '80%',
         backgroundColor: 'green',
         borderWidth: 4,
         borderColor: 'blue',
         borderRadius: 10
     },
-    title:{
-        fontSize:25,
-        textAlign:'center'
+    title: {
+        fontSize: 25,
+        textAlign: 'center'
     },
     Button: {
         height: 60,
         alignItems: 'center',
         justifyContent: 'center',
     },
-    
+
     btnText: {
         fontSize: 24,
         opacity: 1,
         backgroundColor: '#84BCE8',
         width: '57%',
         color: 'black',
-        alignItems:'center',
+        alignItems: 'center',
         justifyContent: 'center',
-        textAlign:'center',
+        textAlign: 'center',
         borderColor: 'black',
         borderRadius: 12,
         borderWidth: 4,
@@ -361,8 +390,8 @@ const styles = StyleSheet.create({
     backgroundImage: {
         flex: 1,
         resizeMode: 'cover', // or 'stretch'
-      },
-      row: {
+    },
+    row: {
         flexDirection: 'row',
         justifyContent: 'center',
         padding: 16,
