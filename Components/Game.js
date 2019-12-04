@@ -9,14 +9,15 @@ import {
     ImageBackground,
     FlatList,
     Image
-   } from 'react-native';
+} from 'react-native';
+import { Audio } from 'expo-av';
 
 
 // import { FlatList } from 'react-native-gesture-handler';
 import { db } from '../db'
 import { ListSkins } from '../services/ServiceInterface'
 
-import Fruit, {Bad_Fruit} from './Fruit';
+import Fruit, { Bad_Fruit } from './Fruit';
 
 let skinRef = db.ref('/Skins');
 
@@ -24,40 +25,40 @@ export default class Game extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            candy:false,
-            bad_candy:false,
+            candy: false,
+            bad_candy: false,
             menu: true,
-            store:false,
+            store: false,
             skins: [],
 
-            hand:false,
-            bgPic:'',
-            handpic:''
+            hand: false,
+            bgPic: '',
+            handpic: ''
         }
         this.handlePositionChange = this.positionChange.bind(this)
     }
-    positionChange(x,y,value){
-        if (y>10){
+    positionChange(x, y, value) {
+        if (y > 10) {
             this.takeCandy(value);
-        }else{
+        } else {
             this.rejectCandy();
         }
     }
-    
 
-    openMenu(){
-        return(
+
+    openMenu() {
+        return (
             <View>
                 <TouchableOpacity
-                        onPress={()=>this.setState({store:true})}
-                        style={styles.Button}>
-                        <Text style={styles.btnText}>Store</Text>
+                    onPress={() => this.setState({ store: true })}
+                    style={styles.Button}>
+                    <Text style={styles.btnText}>Store</Text>
                 </TouchableOpacity>
-               
+
                 <TouchableOpacity
-                        onPress={this.startGame.bind(this)}
-                        style={styles.Button}>
-                        <Text style={styles.btnText}>Start</Text>
+                    onPress={this.startGame.bind(this)}
+                    style={styles.Button}>
+                    <Text style={styles.btnText}>Start</Text>
                 </TouchableOpacity>
 
 
@@ -71,54 +72,66 @@ export default class Game extends Component {
         )
     }
 
-    startGame(){
-        this.setState({menu:false, store:false, candy:false, bad_candy:false, hand:true, score:0, opentimer:2000, candyPic:'',
-            timer:setTimeout(this.openHand.bind(this),((Math.random() * 10) + 1)*1000)})
+    startGame() {
+        this.setState({
+            menu: false, store: false, candy: false, bad_candy: false, hand: true, score: 0, opentimer: 2000, candyPic: '',
+            timer: setTimeout(this.openHand.bind(this), ((Math.random() * 10) + 1) * 1000)
+        })
     }
 
-    takeCandy(type){
+    takeCandy(type) {
         clearTimeout(this.state.closeTimer)
-        if(type){
-            this.setState({score:this.state.score+1});
+        if (type) {
+            this.setState({ score: this.state.score + 1 });
             this.reset()
-        }else{
+        } else {
             this.endGame()
         }
     }
 
-    rejectCandy(){
+    rejectCandy() {
         this.reset()
     }
 
-    openHand(){
-        if (Math.random() >=.2){
-            this.setState({candy:true})
-        }else{
-            this.setState({bad_candy:true})
+    openHand() {
+        if (Math.random() >= .2) {
+            this.setState({ candy: true })
+        } else {
+            this.setState({ bad_candy: true })
         }
-        this.setState({closeTimer:setTimeout(this.closeHand.bind(this),this.state.opentimer)})
+        this.setState({ closeTimer: setTimeout(this.closeHand.bind(this), this.state.opentimer) })
     }
 
-    closeHand(){
+    closeHand() {
         //todo some animation
         this.endGame()
     }
 
-    reset(){
-        this.setState({candy:false, bad_candy:false, hand:false})
+    reset() {
+        this.setState({ candy: false, bad_candy: false, hand: false })
         clearTimeout(this.state.closeTimer)
         clearTimeout(this.state.timer)
-        this.setState({timer:setTimeout(this.openHand.bind(this),((Math.random() * 10) + 1)*1000)})
+        this.setState({ timer: setTimeout(this.openHand.bind(this), ((Math.random() * 10) + 1) * 1000) })
     }
 
-    endGame(){
-        this.setState({menu:true, candy:false, bad_candy:false})
+    endGame() {
+        this.setState({ menu: true, candy: false, bad_candy: false })
         //todo Send data save HS  and all that jazz
     }
 
+    playAudio = async () => {
+        const soundObject = new Audio.Sound();
+        try {
+            await soundObject.loadAsync(require('../assets/Music_assets/Loops/back-home.wav'));
+            await soundObject.playAsync();
+            // Your sound is playing!
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     componentDidMount() {
-        
+        this.playAudio()
 
         skinRef.on('value', (snapshot) => {
 
@@ -126,18 +139,19 @@ export default class Game extends Component {
             //console.log(data);
             //let skins = Object.value(data);
             //console.log(skins);
-            this.setState({skins: data});
+            this.setState({ skins: data });
             console.log(this.state.skins)
         })
+
     }
 
 
-   
 
-    openStore(){
-        
 
-        return(
+    openStore() {
+
+
+        return (
             <View style={styles.Store}>
                 <Text> Hello I am a Store</Text>
 
@@ -147,35 +161,35 @@ export default class Game extends Component {
                     style={styles.skin_container}
                     data={this.state.skins}
                     extraData={this.state}
-                    renderItem={({item}) =>
+                    renderItem={({ item }) =>
 
 
-                              <TouchableOpacity onPress={() => this.props.navigation.navigate('InfoScreen', {info: {item}})}>
-                                  <View style={styles.row}>
-                                        
-                                      <Image
-                                          style={{
-                                              width: 50,
-                                              height: 50
-                                          }}
-                                          source={item.image}
-                                      />
-                                      <Text style={styles.text}> {item.title}</Text>
-                                      <Text style={styles.text}>Price: {item.price}</Text>
+                        <TouchableOpacity onPress={() => this.props.navigation.navigate('InfoScreen', { info: { item } })}>
+                            <View style={styles.row}>
+
+                                <Image
+                                    style={{
+                                        width: 50,
+                                        height: 50
+                                    }}
+                                    source={item.image}
+                                />
+                                <Text style={styles.text}> {item.title}</Text>
+                                <Text style={styles.text}>Price: {item.price}</Text>
 
 
-                                  </View>
+                            </View>
 
-                              </TouchableOpacity>
-                          }
+                        </TouchableOpacity>
+                    }
                     keyExtractor={item => item.title}
-                    />
-                
+                />
+
                 <TouchableOpacity
-                        onPress={this.closeStore.bind(this)}
-                        style={styles.Button}>
-                        <Text style={styles.btnText}>Close Store</Text>
-                    </TouchableOpacity>
+                    onPress={this.closeStore.bind(this)}
+                    style={styles.Button}>
+                    <Text style={styles.btnText}>Close Store</Text>
+                </TouchableOpacity>
 
                 {/* <TouchableOpacity
                         onPress={this.closeStore.bind(this)}
@@ -185,28 +199,28 @@ export default class Game extends Component {
             </View>
         )
     }
-    closeStore(){
-        this.setState({store:false})
+    closeStore() {
+        this.setState({ store: false })
     }
 
 
     render() {
         var Menu = this.state.menu ? this.openMenu() : null;
         var Store = this.state.store ? this.openStore() : null;
-        var Candy = this.state.candy ? <Fruit positionChange={this.handlePositionChange}/> : null;
-        var Bad_Candy = this.state.bad_candy ? <Bad_Fruit positionChange={this.handlePositionChange}/> : null;
-        var Hand = this.state.hand ? <View style={{height:50,width:50, backgroundColor:'white'}}/> : <View style={{height:10,width:10, backgroundColor:'black'}}/>
+        var Candy = this.state.candy ? <Fruit positionChange={this.handlePositionChange} /> : null;
+        var Bad_Candy = this.state.bad_candy ? <Bad_Fruit positionChange={this.handlePositionChange} /> : null;
+        var Hand = this.state.hand ? <View style={{ height: 50, width: 50, backgroundColor: 'white' }} /> : <View style={{ height: 10, width: 10, backgroundColor: 'black' }} />
         return (
             <ImageBackground source={require('../assets/Candy_assets/PNG/bg.png')} style={styles.backgroundImage}>
 
-            <View style={styles.container}>
-                <Text>{this.state.score}</Text>
-                {Hand}
-                {Candy}
-                {Bad_Candy}
-                {Menu}
-                {Store}
-            </View>
+                <View style={styles.container}>
+                    <Text>{this.state.score}</Text>
+                    {Hand}
+                    {Candy}
+                    {Bad_Candy}
+                    {Menu}
+                    {Store}
+                </View>
             </ImageBackground>
         )
     }
@@ -215,7 +229,7 @@ export default class Game extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        flexDirection:'column',
+        flexDirection: 'column',
         justifyContent: 'center',
     },
     skin_container: {
@@ -224,37 +238,37 @@ const styles = StyleSheet.create({
         backgroundColor: '#F5FCFF',
     },
     Store: {
-        flex:1,
+        flex: 1,
         position: 'absolute',
         left: '10%',
-        top:'10%',
-        opacity:0.8,
-        width:'80%',
+        top: '10%',
+        opacity: 0.8,
+        width: '80%',
         height: '80%',
         backgroundColor: 'green',
         borderWidth: 4,
         borderColor: 'blue',
         borderRadius: 10
     },
-    title:{
-        fontSize:25,
-        textAlign:'center'
+    title: {
+        fontSize: 25,
+        textAlign: 'center'
     },
     Button: {
         height: 60,
         alignItems: 'center',
         justifyContent: 'center',
     },
-    
+
     btnText: {
         fontSize: 24,
         opacity: 1,
         backgroundColor: '#84BCE8',
         width: '57%',
         color: 'black',
-        alignItems:'center',
+        alignItems: 'center',
         justifyContent: 'center',
-        textAlign:'center',
+        textAlign: 'center',
         borderColor: 'black',
         borderRadius: 12,
         borderWidth: 4,
@@ -262,8 +276,8 @@ const styles = StyleSheet.create({
     backgroundImage: {
         flex: 1,
         resizeMode: 'cover', // or 'stretch'
-      },
-      row: {
+    },
+    row: {
         flexDirection: 'row',
         justifyContent: 'center',
         padding: 16,
@@ -276,5 +290,5 @@ const styles = StyleSheet.create({
         fontSize: 24,
         color: 'black'
     }
-      
+
 });
