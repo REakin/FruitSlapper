@@ -33,7 +33,10 @@ export default class Game extends Component {
 
             hand: false,
             bgPic: '',
-            handpic: ''
+            handpic: '',
+            bgMusic: require('../assets/Music_assets/Loops/intro.wav'),
+            playingMusic: {},
+            sfx: 'put require paths here',
         }
         this.handlePositionChange = this.positionChange.bind(this)
     }
@@ -119,12 +122,27 @@ export default class Game extends Component {
         //todo Send data save HS  and all that jazz
     }
 
-    playAudio = async () => {
+    playMusic = async (requirePath) => {
         const soundObject = new Audio.Sound();
         try {
-            await soundObject.loadAsync(require('../assets/Music_assets/Loops/intro.wav'));
+            await soundObject.loadAsync(requirePath);
             await soundObject.setIsLoopingAsync(true);
             await soundObject.playAsync();
+            this.setState({
+                playingMusic: soundObject
+            })
+            // Your sound is playing!
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    playSFX = async (requirePath) => {
+        const soundObject = new Audio.Sound();
+        try {
+            await soundObject.loadAsync(requirePath);
+            await soundObject.playAsync();
+            
             // Your sound is playing!
         } catch (error) {
             console.log(error);
@@ -132,7 +150,7 @@ export default class Game extends Component {
     }
 
     componentDidMount() {
-        this.playAudio()
+        this.playMusic(this.state.bgMusic)
 
         skinRef.on('value', (snapshot) => {
 
