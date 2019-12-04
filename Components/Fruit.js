@@ -116,7 +116,7 @@ export class Bad_Fruit extends Component {
                     {...handles}
                 /> */}
                 <Animated.Image
-                    source={require('../assets/Candy_assets/PNG/ico/6.png')}
+                    source={require('../assets/Candy_assets/PNG/ico/12.png')}
                     style={[styles.ball, this.state.position.getLayout(), { opacity: this.state.opacity }]}
                     {...handles}
                 />
