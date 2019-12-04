@@ -122,7 +122,7 @@ export default class Game extends Component {
     playAudio = async () => {
         const soundObject = new Audio.Sound();
         try {
-            await soundObject.loadAsync(require('../assets/Music_assets/Loops/back-home.wav'));
+            await soundObject.loadAsync(require('../assets/Music_assets/Loops/intro.wav'));
             await soundObject.setIsLoopingAsync(true);
             await soundObject.playAsync();
             // Your sound is playing!
