@@ -18,7 +18,7 @@ import { ListSkins } from '../services/ServiceInterface'
 
 import Fruit, {Bad_Fruit} from './Fruit';
 
-let skinRef = db.ref('/Skins');
+let PlayerRef = db.ref('/Player');
 
 export default class Game extends Component {
     constructor(props) {
@@ -29,10 +29,17 @@ export default class Game extends Component {
             menu: true,
             store:false,
             skins: [],
-
+            asset_store: [require("../assets/Monster_assets/Skins/1.png"), require("../assets/Monster_assets/Skins/2.png"),
+                          require("../assets/Monster_assets/Skins/3.png"), require("../assets/Monster_assets/Skins/4.png"),
+                          require("../assets/Monster_assets/Skins/5.png"), require("../assets/Monster_assets/Skins/6.png"),
+                          require("../assets/Monster_assets/Skins/7.png")],
             hand:false,
             bgPic:'',
-            handpic:''
+            handpic:'',
+            current_skin: require("../assets/Monster_assets/Skins/1.png"),
+            character_visible: 0,
+            cur_money: 0
+
         }
         this.handlePositionChange = this.positionChange.bind(this)
     }
@@ -72,7 +79,8 @@ export default class Game extends Component {
     }
 
     startGame(){
-        this.setState({menu:false, store:false, candy:false, bad_candy:false, hand:true, score:0, opentimer:2000, candyPic:'',
+
+        this.setState({menu:false, store:false, candy:false, bad_candy:false, hand:true, score:0, opentimer:2000, candyPic:'', character_visible: 1,
             timer:setTimeout(this.openHand.bind(this),((Math.random() * 10) + 1)*1000)})
     }
 
@@ -112,64 +120,139 @@ export default class Game extends Component {
     }
 
     endGame(){
-        this.setState({menu:true, candy:false, bad_candy:false})
+
+        db.ref('/Player/1/Cash').update({
+            money: this.state.score + this.state.cur_money
+        });
+
+        this.setState({menu:true, candy:false, bad_candy:false, character_visible: 0})
         //todo Send data save HS  and all that jazz
     }
 
 
-    componentDidMount() {
+
+    purchase(new_bal, skin_to_buy){
+        
+        this.setState({cur_money: new_bal})
+        console.log(this.state.cur_money)
+
+        db.ref('/Player/1/Cash').update({
+            money: new_bal
+        });
         
 
-        skinRef.on('value', (snapshot) => {
+        console.log(this.state.cur_money)
+        
+        db.ref(`/Player/0/Skins/${skin_to_buy}`).update({
+            owned: true
+        });
 
-            let data = snapshot.val();
-            //console.log(data);
-            //let skins = Object.value(data);
-            //console.log(skins);
-            this.setState({skins: data});
-            console.log(this.state.skins)
-        })
     }
 
+
+    componentDidMount() {
+
+        db.ref('/Player/1/Cash').on('value', (snapshot) => {
+            let data = snapshot.val();
+            this.setState({cur_money: data.money})
+        })
+        
+        PlayerRef.on('value', (snapshot) => {
+            let data = snapshot.val();
+            var num_items = data[0].Skins.length;
+            for(i=0; i < num_items; i++) {
+                var imageKey = this.state.asset_store[i]
+                data[0].Skins[i].image = imageKey
+            }
+            this.setState({skins: data[0].Skins});
+        })
+    }
 
    
 
     openStore(){
-        
 
         return(
             <View style={styles.Store}>
                 <Text> Hello I am a Store</Text>
-
-
+                <Text>Current Balance: ${this.state.cur_money}</Text>
 
                 <FlatList
                     style={styles.skin_container}
                     data={this.state.skins}
                     extraData={this.state}
-                    renderItem={({item}) =>
+                    renderItem={({item}) => {if(item.owned == false) {
+                        return(
+                                      
+                              <TouchableOpacity onPress={() => {if(item.owned == false) {
+                                if(item.price <= this.state.cur_money) {
+                                    var new_bal = this.state.cur_money - item.price;
+                                    this.purchase(new_bal, item.skin_num)
+                                    
+                                }
 
-
-                              <TouchableOpacity onPress={() => this.props.navigation.navigate('InfoScreen', {info: {item}})}>
+                              } else {
+                                  this.setState({current_skin: item.image})
+                              }
+                              
+                              
+                              }}>
+                                  
                                   <View style={styles.row}>
-                                        
+                                     
                                       <Image
                                           style={{
                                               width: 50,
                                               height: 50
                                           }}
-                                          source={item.image}
+                                        
+                                         source={item.image}
                                       />
                                       <Text style={styles.text}> {item.title}</Text>
-                                      <Text style={styles.text}>Price: {item.price}</Text>
-
-
+                                      <Text style={styles.text}> Price: {item.price}</Text>
                                   </View>
-
                               </TouchableOpacity>
+                        )
+                    } else {
+                        return(
+                        <TouchableOpacity onPress={() => {if(item.owned == false) {
+                            if(item.price <= this.state.cur_money) {
+                                var new_bal = this.state.cur_money - item.price;
+                                this.purchase(new_bal, item.skin_num)
+                                
+                            }
+
+                          } else {
+                              this.setState({current_skin: item.image})
+                          }
+                          
+                          
+                          }}>
+                              
+                              <View style={styles.row}>
+                                 
+                                  <Image
+                                      style={{
+                                          width: 50,
+                                          height: 50
+                                      }}
+                                    
+                                     source={item.image}
+                                  />
+                                  <Text style={styles.text}> {item.title}</Text>
+                                  <Text style={styles.text}> Owned </Text>
+                              </View>
+                          </TouchableOpacity>
+                        )
+
+                    }
+                    }
+
+                              
                           }
                     keyExtractor={item => item.title}
                     />
+                    
                 
                 <TouchableOpacity
                         onPress={this.closeStore.bind(this)}
@@ -183,6 +266,7 @@ export default class Game extends Component {
                         <Text style={styles.btnText}>Close Store</Text>
                 </TouchableOpacity> */}
             </View>
+            
         )
     }
     closeStore(){
@@ -206,6 +290,20 @@ export default class Game extends Component {
                 {Bad_Candy}
                 {Menu}
                 {Store}
+
+
+                <Image
+                    style={{
+                        width: 100,
+                        height: 100,
+                        opacity: this.state.character_visible,
+                        bottom: "5%",
+                        left: '35%',
+                        justifyContent: 'center'
+                
+                    }}
+                    source={this.state.current_skin}
+                    />
             </View>
             </ImageBackground>
         )
@@ -275,6 +373,7 @@ const styles = StyleSheet.create({
     text: {
         fontSize: 24,
         color: 'black'
-    }
+    },
+    
       
 });

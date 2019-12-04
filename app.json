@@ -29,7 +29,7 @@
     "ios": {
       "supportsTablet": true
     },
-    "description": "",
+    "description": "A Game made in react native for a class project",
     "githubUrl": "https://github.com/REakin/SweetTooth"
   }
 }
