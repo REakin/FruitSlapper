@@ -12,7 +12,6 @@ import {
 } from 'react-native';
 import { Audio } from 'expo-av';
 
-
 // import { FlatList } from 'react-native-gesture-handler';
 import { db } from '../db'
 import { ListSkins } from '../services/ServiceInterface'
@@ -144,15 +143,15 @@ export default class Game extends Component {
 
     purchase(new_bal, skin_to_buy){
         
-        this.setState({cur_money: new_bal})
-        console.log(this.state.cur_money)
-    componentDidMount() {
-        this.playAudio()
+        this.setState({cur_money: new_bal});
+        console.log(this.state.cur_money);
 
+/*    componentDidMount() {
+        this.playAudio()
+    }*/
         db.ref('/Player/1/Cash').update({
             money: new_bal
         });
-        
 
         console.log(this.state.cur_money)
         
@@ -160,8 +159,6 @@ export default class Game extends Component {
             owned: true
         });
         }
-    }
-
 
     componentDidMount() {
 
@@ -173,8 +170,8 @@ export default class Game extends Component {
         PlayerRef.on('value', (snapshot) => {
             let data = snapshot.val();
             var num_items = data[0].Skins.length;
-            for(i=0; i < num_items; i++) {
-                var imageKey = this.state.asset_store[i]
+            for(let i=0; i < num_items; i++) {
+                var imageKey = this.state.asset_store[i];
                 data[0].Skins[i].image = imageKey
             }
             this.setState({skins: data[0].Skins});
@@ -186,9 +183,7 @@ export default class Game extends Component {
 
     }
 
-
     openStore() {
-
 
         return (
             <View style={styles.Store}>
