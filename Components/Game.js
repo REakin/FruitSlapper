@@ -188,6 +188,7 @@ export default class Game extends Component {
                                 if(item.price <= this.state.cur_money) {
                                     var new_bal = this.state.cur_money - item.price;
                                     this.purchase(new_bal, item.skin_num)
+                                    this.setState({current_skin: item.image})
                                     
                                 }
 
