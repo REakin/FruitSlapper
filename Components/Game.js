@@ -38,8 +38,10 @@ export default class Game extends Component {
             handpic:'',
             current_skin: require("../assets/Monster_assets/Skins/1.png"),
             character_visible: 0,
-            cur_money: 0
-
+            cur_money: 0,
+            bgMusic: require('../assets/Music_assets/Loops/intro.wav'),
+            playingMusic: {},
+            sfx: 'put require paths here',
         }
         this.handlePositionChange = this.positionChange.bind(this)
     }
@@ -129,11 +131,27 @@ export default class Game extends Component {
         //todo Send data save HS  and all that jazz
     }
 
-    playAudio = async () => {
+    playMusic = async (requirePath) => {
         const soundObject = new Audio.Sound();
         try {
-            await soundObject.loadAsync(require('../assets/Music_assets/Loops/back-home.wav'));
+            await soundObject.loadAsync(requirePath);
+            await soundObject.setIsLoopingAsync(true);
             await soundObject.playAsync();
+            this.setState({
+                playingMusic: soundObject
+            })
+            // Your sound is playing!
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    playSFX = async (requirePath) => {
+        const soundObject = new Audio.Sound();
+        try {
+            await soundObject.loadAsync(requirePath);
+            await soundObject.playAsync();
+            
             // Your sound is playing!
         } catch (error) {
             console.log(error);
@@ -146,9 +164,6 @@ export default class Game extends Component {
         this.setState({cur_money: new_bal});
         console.log(this.state.cur_money);
 
-/*    componentDidMount() {
-        this.playAudio()
-    }*/
         db.ref('/Player/1/Cash').update({
             money: new_bal
         });
@@ -159,9 +174,10 @@ export default class Game extends Component {
             owned: true
         });
         }
+        
 
     componentDidMount() {
-
+        this.playMusic(this.state.bgMusic)
         db.ref('/Player/1/Cash').on('value', (snapshot) => {
             let data = snapshot.val();
             this.setState({cur_money: data.money})
