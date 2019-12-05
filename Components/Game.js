@@ -1,22 +1,22 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
     View,
     Text,
     StyleSheet,
-    Button,
-    TouchableHighlight,
     TouchableOpacity,
     ImageBackground,
     FlatList,
-    Image
+    Image,
+    Animated
 } from 'react-native';
-import { Audio } from 'expo-av';
+import posed from 'react-native-pose'
+import {Audio} from 'expo-av';
+import {db} from '../db'
+import {ListSkins} from '../services/ServiceInterface'
+import Fruit, {Bad_Fruit} from './Fruit';
+let PlayerRef = db.ref('/Player');
 
-// import { FlatList } from 'react-native-gesture-handler';
-import { db } from '../db'
-import { ListSkins } from '../services/ServiceInterface'
 
-import Fruit, { Bad_Fruit } from './Fruit';
 
 
 
@@ -44,10 +44,17 @@ export default class Game extends Component {
             sfx: 'put require paths here',
             accnt_exist: false,
             accnt_id: 0,
-            accnt_list: 0
+            accnt_list: 0,
+            monPos: false
         }
         this.handlePositionChange = this.positionChange.bind(this)
     }
+
+    //Hides the ting ya know....
+    static navigationOptions = {
+        header: null
+    };
+
     positionChange(x, y, value) {
         if (y > 10) {
             this.takeCandy(value);
@@ -56,12 +63,11 @@ export default class Game extends Component {
         }
     }
 
-
     openMenu() {
         return (
             <View>
                 <TouchableOpacity
-                    onPress={() => this.setState({ store: true })}
+                    onPress={() => this.setState({store: true})}
                     style={styles.Button}>
                     <Text style={styles.btnText}>Store</Text>
                 </TouchableOpacity>
@@ -71,28 +77,30 @@ export default class Game extends Component {
                     style={styles.Button}>
                     <Text style={styles.btnText}>Start</Text>
                 </TouchableOpacity>
-
-
-                {/* <Button
-                    title={"Store"}
-                    onPress={()=>this.setState({store:true})}/>
-                <Button
-                    title={"Start"}
-                    onPress={this.startGame.bind(this)}/> */}
             </View>
         )
     }
 
-    startGame(){
-
-        this.setState({menu:false, store:false, candy:false, bad_candy:false, hand:true, score:0, opentimer:2000, candyPic:'', character_visible: 1,
-            timer:setTimeout(this.openHand.bind(this),((Math.random() * 10) + 1)*1000)})
+    startGame() {
+        this.setState({
+            menu: false,
+            store: false,
+            candy: false,
+            bad_candy: false,
+            hand: true,
+            score: 0,
+            opentimer: 2000,
+            candyPic: '',
+            character_visible: 1,
+            timer: setTimeout(this.openHand.bind(this), ((Math.random() * 5) + 1) * 1000)
+        })
     }
 
     takeCandy(type) {
-        clearTimeout(this.state.closeTimer)
+        clearTimeout(this.state.closeTimer);
         if (type) {
-            this.setState({ score: this.state.score + 1 });
+            this.setState({score: this.state.score + 1, opentimer: this.state.opentimer * .8, monPos: true});
+            //todo some animation for the monster
             this.reset()
         } else {
             this.endGame()
@@ -105,11 +113,11 @@ export default class Game extends Component {
 
     openHand() {
         if (Math.random() >= .2) {
-            this.setState({ candy: true })
+            this.setState({candy: true})
         } else {
-            this.setState({ bad_candy: true })
+            this.setState({bad_candy: true})
         }
-        this.setState({ closeTimer: setTimeout(this.closeHand.bind(this), this.state.opentimer) })
+        this.setState({closeTimer: setTimeout(this.closeHand.bind(this), this.state.opentimer)})
     }
 
     closeHand() {
@@ -118,10 +126,10 @@ export default class Game extends Component {
     }
 
     reset() {
-        this.setState({ candy: false, bad_candy: false, hand: false })
-        clearTimeout(this.state.closeTimer)
-        clearTimeout(this.state.timer)
-        this.setState({ timer: setTimeout(this.openHand.bind(this), ((Math.random() * 10) + 1) * 1000) })
+        this.setState({candy: false, bad_candy: false, hand: false, monPos:false});
+        clearTimeout(this.state.closeTimer);
+        clearTimeout(this.state.timer);
+        this.setState({timer: setTimeout(this.openHand.bind(this), ((Math.random() * 5) + 1) * 1000)})
     }
 
     async endGame(){
@@ -136,7 +144,7 @@ export default class Game extends Component {
         //     money: this.state.score + this.state.cur_money
         // });
 
-        this.setState({menu:true, candy:false, bad_candy:false, character_visible: 0})
+        this.setState({menu: true, candy: false, bad_candy: false, character_visible: 0})
         //todo Send data save HS  and all that jazz
     }
 
@@ -160,13 +168,12 @@ export default class Game extends Component {
         try {
             await soundObject.loadAsync(requirePath);
             await soundObject.playAsync();
-            
+
             // Your sound is playing!
         } catch (error) {
             console.log(error);
         }
     }
-
 
     async purchase(new_bal, skin_to_buy){
         
@@ -468,12 +475,12 @@ export default class Game extends Component {
                     }
                     }
 
-                              
-                          }
+
+                    }
                     keyExtractor={item => item.title}
-                    />
-                    
-                
+                />
+
+
                 <TouchableOpacity
                     onPress={this.closeStore.bind(this)}
                     style={styles.Button}>
@@ -486,45 +493,47 @@ export default class Game extends Component {
                         <Text style={styles.btnText}>Close Store</Text>
                 </TouchableOpacity> */}
             </View>
-            
+
         )
     }
+
     closeStore() {
-        this.setState({ store: false })
+        this.setState({store: false})
     }
 
-
     render() {
-        var Menu = this.state.menu ? this.openMenu() : null;
-        var Store = this.state.store ? this.openStore() : null;
-        var Candy = this.state.candy ? <Fruit positionChange={this.handlePositionChange} /> : null;
-        var Bad_Candy = this.state.bad_candy ? <Bad_Fruit positionChange={this.handlePositionChange} /> : null;
-        var Hand = this.state.hand ? <View style={{ height: 50, width: 50, backgroundColor: 'white' }} /> : <View style={{ height: 10, width: 10, backgroundColor: 'black' }} />
+        let Menu = this.state.menu ? this.openMenu() : null;
+        let Store = this.state.store ? this.openStore() : null;
+        let Candy = this.state.candy ? <Fruit positionChange={this.handlePositionChange}/> : null;
+        let Bad_Candy = this.state.bad_candy ? <Bad_Fruit positionChange={this.handlePositionChange}/> : null;
+        let Hand = this.state.hand ? <View style={{height: 50, width: 50, backgroundColor: 'white'}}/> : <View style={{height: 10, width: 10, backgroundColor: 'black'}}/>;
+
         return (
             <ImageBackground source={require('../assets/Candy_assets/PNG/bg.png')} style={styles.backgroundImage}>
 
-            <View style={styles.container}>
-                <Text>{this.state.score}</Text>
-                {Hand}
-                {Candy}
-                {Bad_Candy}
-                {Menu}
-                {Store}
-
-
-                <Image
-                    style={{
-                        width: 100,
-                        height: 100,
-                        opacity: this.state.character_visible,
-                        bottom: "5%",
-                        left: '35%',
-                        justifyContent: 'center'
-                
-                    }}
-                    source={this.state.current_skin}
+                <View style={styles.container}>
+                    <View style={{position:'absolute',top:0,left:'80%',width:100,height:100, backgroundColor:'red'}}>
+                        <Text>Current Score: {this.state.score}</Text>
+                        <Text>High Score: {this.state.score}</Text>
+                    </View>
+                    <Image
+                        style={{
+                            position: 'absolute',
+                            width: 100,
+                            height: 100,
+                            opacity: this.state.character_visible,
+                            bottom: 30,
+                            left: '35%',
+                            justifyContent: 'center'
+                        }}
+                        source={this.state.current_skin}
                     />
-            </View>
+                    {Hand}
+                    {Candy}
+                    {Bad_Candy}
+                    {Menu}
+                    {Store}
+                </View>
             </ImageBackground>
         )
     }
@@ -594,6 +603,6 @@ const styles = StyleSheet.create({
         fontSize: 24,
         color: 'black'
     },
-    
-      
+
+
 });

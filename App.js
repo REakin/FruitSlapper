@@ -22,6 +22,12 @@ const RootStack = createStackNavigator(
     {
         initialRouteName: 'Splash',
     },
+    {
+        headerMode:'none',
+        navigationOptions:{
+            headerVisible:false,
+        }
+    },
 );
 
 const AppContainer = createAppContainer(RootStack);
