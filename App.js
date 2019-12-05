@@ -22,6 +22,12 @@ const RootStack = createStackNavigator(
     {
         initialRouteName: 'Game',
     },
+    {
+        headerMode:'none',
+        navigationOptions:{
+            headerVisible:false,
+        }
+    },
 );
 
 const AppContainer = createAppContainer(RootStack);
