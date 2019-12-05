@@ -14,9 +14,6 @@ const RootStack = createStackNavigator(
         },
         Game: {
             screen: Game
-        },
-        Fruit: {
-            screen: Fruit
         }
     },
     {

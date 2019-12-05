@@ -101,7 +101,6 @@ export default class Game extends Component {
         clearTimeout(this.state.closeTimer);
         if (type) {
             this.setState({score: this.state.score + 1, opentimer: this.state.opentimer * .8, monPos: true});
-            //todo some animation for the monster
             this.reset()
         } else {
             this.endGame()

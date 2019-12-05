@@ -21,9 +21,10 @@ export default class Splash extends Component {
             accnt_id: 0
         }
     }
-
-
-
+    
+    static navigationOptions = {
+        header: null
+    };
 
     signIn = async () => {
         try {
@@ -58,16 +59,6 @@ export default class Splash extends Component {
             <View style={styles.topContainer}>
                 
                 <TouchableOpacity onPress={() => this.signIn()}>
-                    
-                {/* <Text style={styles.title}>Splash Screen!</Text>
-                <Button
-                style={styles.Button}
-                title={'Play'}
-                onPress={()=> this.props.navigation.navigate('Game')}/> */}
-                {/* <Text style={styles.title}>Sign In With Google</Text> */}
-                {/* <Button
-                    title="SIGN IN WITH GOOGLE"
-                    onPress={() => this.signIn()}/> */}
                     <Text style={styles.title}>Sweet<Text style={styles.title2}>T
                     <Image source={require('../assets/Candy_assets/PNG/ico/3.png')} style={styles.image}/>
                     <Image source={require('../assets/Candy_assets/PNG/ico/3.png')} style={styles.image}/>
