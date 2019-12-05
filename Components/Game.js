@@ -387,6 +387,10 @@ export default class Game extends Component {
 
     }
 
+    async componentWillUnmount() {
+        await this.state.playingMusic.stopAsync()
+    }
+
     openStore() {
 
         return (
