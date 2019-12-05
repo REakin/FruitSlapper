@@ -32,7 +32,7 @@ export default class Game extends Component {
             asset_store: [require("../assets/Monster_assets/Skins/1.png"), require("../assets/Monster_assets/Skins/2.png"),
                           require("../assets/Monster_assets/Skins/3.png"), require("../assets/Monster_assets/Skins/4.png"),
                           require("../assets/Monster_assets/Skins/5.png"), require("../assets/Monster_assets/Skins/6.png"),
-                          require("../assets/Monster_assets/Skins/7.png")],
+                          require("../assets/Monster_assets/Skins/7.png"), require("../assets/Monster_assets/Skins/8.png")],
             hand:false,
             bgPic:'',
             handpic:'',
@@ -262,45 +262,51 @@ export default class Game extends Component {
         add_snapshot.set([
             {"Skins":  [
                 {
-                    "price": 100,
+                    "price": 10,
                     "skin_num": 0,
                     "title": "Red",
                     "owned": true
                 },
                 {
-                    "price": 100,
+                    "price": 10,
                     "skin_num": 1,
                     "title": "blue",
                     "owned": false
                 },
                 {
-                    "price": 100,
+                    "price": 10,
                     "skin_num": 2,
                     "title": "orange",
                     "owned": false
                 },
                 {
-                    "price": 100,
+                    "price": 10,
                     "skin_num": 3,
                     "title": "yellow",
                     "owned": false
                 },
                 {
-                    "price": 400,
+                    "price": 40,
                     "skin_num": 4,
                     "title": "purple",
                     "owned": false
                 },
                 {
-                    "price": 400,
+                    "price": 40,
                     "skin_num": 5,
                     "title": "green",
                     "owned": false
                 },
                 {
-                    "price": 600,
+                    "price": 60,
                     "skin_num": 6,
                     "title": "aqua",
+                    "owned": false
+                },
+                {
+                    "price": 100,
+                    "skin_num": 7,
+                    "title": "special",
                     "owned": false
                 }
                 ]
