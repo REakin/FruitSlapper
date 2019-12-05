@@ -17,45 +17,47 @@ export default class Splash extends Component {
         this.state = {
             signedIn: false,
             name: "",
-            photoUrl: ""
+            photoUrl: "",
+            accnt_id: 0
         }
     }
 
 
 
 
-    // signIn = async () => {
-    //     try {
-    //         const result = await Google.logInAsync({
-    //             androidClientId: "274067395902-bpdgr2n4tgm0u5qv2kl84934lsq5d5p7.apps.googleusercontent.com",
-    //             scopes: ["profile", "email"]
-    //         });
+    signIn = async () => {
+        try {
+            const result = await Google.logInAsync({
+                androidClientId: "274067395902-7giinil3jb1bcgaaai8ncc00roajbasn.apps.googleusercontent.com",
+                scopes: ["profile", "email"]
+            });
 
-    //         if (result.type === "success") {
-    //             console.log(result.user);
-    //             this.setState({
-    //                 signedIn: true,
-    //                 name: result.user.name,
-    //                 photoUrl: result.user.photoUrl
-    //             });
-    //             this.props.navigation.navigate('Game', {
-    //                 name: this.state.name,
-    //                 photoUrl: this.state.photoUrl,
-    //             });
-    //         } else {
-    //             console.log("cancelled")
-    //         }
-    //     } catch (e) {
-    //         console.log("error", e)
-    //     }
-    // };
+            if (result.type === "success") {
+                this.setState({
+                    signedIn: true,
+                    name: result.user.name,
+                    accnt_id: result.user.id
+                    
+                });
+                this.props.navigation.navigate('Game', {
+                    name: this.state.name,
+                    photoUrl: this.state.photoUrl,
+                    accnt_id: this.state.accnt_id
+                });
+            } else {
+                console.log("cancelled")
+            }
+        } catch (e) {
+            console.log("error", e)
+        }
+    };
 
     render() {
         return (
             <ImageBackground source={require('../assets/Candy_assets/PNG/bg.png')} style={styles.backgroundImage}>
             <View style={styles.topContainer}>
                 
-                <TouchableOpacity onPress={() => this.props.navigation.navigate('Game')}>
+                <TouchableOpacity onPress={() => this.signIn()}>
                     
                 {/* <Text style={styles.title}>Splash Screen!</Text>
                 <Button

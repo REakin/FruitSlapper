@@ -18,7 +18,7 @@ import { ListSkins } from '../services/ServiceInterface'
 
 import Fruit, { Bad_Fruit } from './Fruit';
 
-let PlayerRef = db.ref('/Player');
+
 
 export default class Game extends Component {
     constructor(props) {
@@ -42,6 +42,9 @@ export default class Game extends Component {
             bgMusic: require('../assets/Music_assets/Loops/intro.wav'),
             playingMusic: {},
             sfx: 'put require paths here',
+            accnt_exist: false,
+            accnt_id: 0,
+            accnt_list: 0
         }
         this.handlePositionChange = this.positionChange.bind(this)
     }
@@ -121,11 +124,17 @@ export default class Game extends Component {
         this.setState({ timer: setTimeout(this.openHand.bind(this), ((Math.random() * 10) + 1) * 1000) })
     }
 
-    endGame(){
+    async endGame(){
 
-        db.ref('/Player/1/Cash').update({
-            money: this.state.score + this.state.cur_money
-        });
+        const new_bal = this.state.score + this.state.cur_money
+
+        const ref_money = db.ref(`/${this.state.accnt_id}/1/Cash`)
+        await ref_money.update({ money: new_bal})
+        this.setState({cur_money: new_bal})
+
+        // db.ref('/Player/1/Cash').update({
+        //     money: this.state.score + this.state.cur_money
+        // });
 
         this.setState({menu:true, candy:false, bad_candy:false, character_visible: 0})
         //todo Send data save HS  and all that jazz
@@ -159,43 +168,216 @@ export default class Game extends Component {
     }
 
 
-    purchase(new_bal, skin_to_buy){
+    async purchase(new_bal, skin_to_buy){
         
         this.setState({cur_money: new_bal});
-        console.log(this.state.cur_money);
 
-        db.ref('/Player/1/Cash').update({
-            money: new_bal
-        });
-
-        console.log(this.state.cur_money)
+        const cash_ref =  db.ref(`/${this.state.accnt_id}/1/Cash`)
+        await cash_ref.update({ money: new_bal})
         
-        db.ref(`/Player/0/Skins/${skin_to_buy}`).update({
-            owned: true
-        });
+
+        // db.ref(`/${this.state.accnt_id}/1/Cash`).update({
+        //     money: new_bal
+        // });
+
+        const skin_ref = db.ref(`/${this.state.accnt_id}/0/Skins/${skin_to_buy}`)
+        await skin_ref.update({ owned: true })
+
+
+
+        const playerRef = db.ref(`/${this.state.accnt_id}`)
+        const skin_snapshot = await playerRef.once('value')
+        let data = skin_snapshot.val();
+        var num_items = data[0].Skins.length;
+
+
+
+        for(let i=0; i < num_items; i++) {
+            var imageKey = this.state.asset_store[i];
+            data[0].Skins[i].image = imageKey
         }
+       
+
+        this.setState({skins: data[0].Skins});
+        
+        // db.ref(`/${this.state.accnt_id}/0/Skins/${skin_to_buy}`).update({
+        //     owned: true
+        // });
+    }
+
+
+    async getAccountList() {
+        console.log("Starting List")
+
+        var list_db = db.ref(`/`)
+        const snapshot = await list_db.once(`value`)
+        const data = snapshot.val();
+        var accnt_list = Object.keys(data).length
+        console.log("account list in db call: ", accnt_list)
+        console.log("Get list is done")
+
+        return accnt_list
+        // this.setState({accnt_list: accnt_list})
+        // console.log("account state is: " , this.state.accnt_list)
+        // console.log(this.state.accnt_list)
+        
+    }
+
+    async checkAccountList(accnt_list) {
+
+    
+        console.log('Starting check')
+        for(i = 0; i < accnt_list; i++){
+            console.log("working")
+            console.log(i)
+            const accnt_ref = db.ref(`/${this.state.accnt_id}`)
+            const act_snapshot = await accnt_ref.once('value')
+            let data = act_snapshot.val();   
+            if(data == null) {
+                console.log("Does not exist")            
+                // console.log("account num is at first: ", this.state.accnt_num)
+            } else if(data != null) {
+                console.log('Does Exist')
+                this.setState({accnt_exist: true})
+                this.setState({accnt_num: (i)})
+                }
+                break;
+            }
+        // console.log("Account num is at: ", this.state.accnt_num)
+        // console.log("Account Exists is at: ", this.state.accnt_exist)
+        console.log("Check is done")
+    }
+
+    async addAccount() {
+        console.log("starting add")
+        console.log(this.state.accnt_exist)
+
         
 
-    componentDidMount() {
-        this.playMusic(this.state.bgMusic)
-        db.ref('/Player/1/Cash').on('value', (snapshot) => {
-            let data = snapshot.val();
-            this.setState({cur_money: data.money})
-        })
+
+        if(this.state.accnt_exist == false) {
+
+        const add_accnt = db.ref('/')
+        const add_snapshot = await add_accnt.child(this.state.accnt_id)
+        add_snapshot.set([
+            {"Skins":  [
+                {
+                    "price": 100,
+                    "skin_num": 0,
+                    "title": "Red",
+                    "owned": true
+                },
+                {
+                    "price": 100,
+                    "skin_num": 1,
+                    "title": "blue",
+                    "owned": false
+                },
+                {
+                    "price": 100,
+                    "skin_num": 2,
+                    "title": "orange",
+                    "owned": false
+                },
+                {
+                    "price": 100,
+                    "skin_num": 3,
+                    "title": "yellow",
+                    "owned": false
+                },
+                {
+                    "price": 400,
+                    "skin_num": 4,
+                    "title": "purple",
+                    "owned": false
+                },
+                {
+                    "price": 400,
+                    "skin_num": 5,
+                    "title": "green",
+                    "owned": false
+                },
+                {
+                    "price": 600,
+                    "skin_num": 6,
+                    "title": "aqua",
+                    "owned": false
+                }
+                ]
+            },
+            
+                {"Cash": {
+                    "money": 0
+                }
+                }
+            
+            ]);
+
+        }
+        console.log("Add is done")
+    }
+
+
+    async retriveCash() {
+        const playerRef = db.ref(`/${this.state.accnt_id}/1/Cash`)
+        const cash_snapshot = await playerRef.once('value')
+        const data = cash_snapshot.val();
+        this.setState({cur_money: data.money})
+
+        // db.ref(`/0/Player/1/Cash`).on('value', (snapshot) => {
+        //     let data = snapshot.val();
+        //     this.setState({cur_money: data.money})
+        // })
+
+
+    }
+
+    async getSkins() {
+
+        // PlayerRef.on('value', (snapshot) => {
+        //     let data = snapshot.val();
+        //     var num_items = data[0].Skins.length;
+        //     for(let i=0; i < num_items; i++) {
+        //         var imageKey = this.state.asset_store[i];
+        //         data[0].Skins[i].image = imageKey
+        //     }
+
+    
+        const playerRef = db.ref(`/${this.state.accnt_id}`)
+        const skin_snapshot = await playerRef.once('value')
+        let data = skin_snapshot.val();
+        var num_items = data[0].Skins.length;
+
+
+
+        for(let i=0; i < num_items; i++) {
+            var imageKey = this.state.asset_store[i];
+            data[0].Skins[i].image = imageKey
+        }
+       
+
+        this.setState({skins: data[0].Skins});
         
-        PlayerRef.on('value', (snapshot) => {
-            let data = snapshot.val();
-            var num_items = data[0].Skins.length;
-            for(let i=0; i < num_items; i++) {
-                var imageKey = this.state.asset_store[i];
-                data[0].Skins[i].image = imageKey
-            }
-            this.setState({skins: data[0].Skins});
-            //console.log(data);
-            //let skins = Object.value(data);
-            //console.log(skins);
-            console.log(this.state.skins)
-        })
+        
+    }
+        
+
+    async componentDidMount() {
+        this.playMusic(this.state.bgMusic)
+
+        const { navigation } = this.props;
+        const accnt_id = navigation.getParam('accnt_id','No Results');
+        this.setState({accnt_id: accnt_id})
+        console.log(accnt_id);
+
+
+        var accnt_list = await this.getAccountList();
+        
+        await this.checkAccountList(accnt_list);
+        await this.addAccount();
+
+        await this.retriveCash();
+        await this.getSkins();
 
     }
 
@@ -210,7 +392,9 @@ export default class Game extends Component {
                     style={styles.skin_container}
                     data={this.state.skins}
                     extraData={this.state}
-                    renderItem={({item}) => {if(item.owned == false) {
+                    renderItem={({item}) => {
+                        console.log(item)
+                        if(item.owned == false) {
                         return(
                                       
                               <TouchableOpacity onPress={() => {if(item.owned == false) {

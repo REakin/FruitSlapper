@@ -20,7 +20,7 @@ const RootStack = createStackNavigator(
         }
     },
     {
-        initialRouteName: 'Game',
+        initialRouteName: 'Splash',
     },
 );
 
