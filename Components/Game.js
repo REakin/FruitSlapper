@@ -45,7 +45,8 @@ export default class Game extends Component {
             accnt_exist: false,
             accnt_id: 0,
             accnt_list: 0,
-            monPos: false
+            monPos: false,
+            highscore: 0
         }
         this.handlePositionChange = this.positionChange.bind(this)
     }
@@ -134,18 +135,25 @@ export default class Game extends Component {
 
     async endGame(){
 
+        this.setState({menu: true, candy: false, bad_candy: false, character_visible: 0})
+
         const new_bal = this.state.score + this.state.cur_money
 
         const ref_money = db.ref(`/${this.state.accnt_id}/1/Cash`)
         await ref_money.update({ money: new_bal})
-        this.setState({cur_money: new_bal})
 
-        // db.ref('/Player/1/Cash').update({
-        //     money: this.state.score + this.state.cur_money
-        // });
+        const ref_hscore = db.ref(`/${this.state.accnt_id}/2/HighScore`)
+        const hs_snapshot = await ref_hscore.once('value')
+        const highscore = hs_snapshot.val();
+        console.log(highscore.HighScore)
+        if(highscore.HighScore < this.state.score) {
+            await ref_hscore.update({HighScore: this.state.score})
+            this.setState({highscore: this.state.score})
+        }
+        
+        this.setState({cur_money: new_bal, score: 0})
 
-        this.setState({menu: true, candy: false, bad_candy: false, character_visible: 0})
-        //todo Send data save HS  and all that jazz
+
     }
 
     playMusic = async (requirePath) => {
@@ -183,10 +191,6 @@ export default class Game extends Component {
         await cash_ref.update({ money: new_bal})
         
 
-        // db.ref(`/${this.state.accnt_id}/1/Cash`).update({
-        //     money: new_bal
-        // });
-
         const skin_ref = db.ref(`/${this.state.accnt_id}/0/Skins/${skin_to_buy}`)
         await skin_ref.update({ owned: true })
 
@@ -207,57 +211,46 @@ export default class Game extends Component {
 
         this.setState({skins: data[0].Skins});
         
-        // db.ref(`/${this.state.accnt_id}/0/Skins/${skin_to_buy}`).update({
-        //     owned: true
-        // });
     }
 
 
     async getAccountList() {
-        console.log("Starting List")
+        
 
         var list_db = db.ref(`/`)
         const snapshot = await list_db.once(`value`)
         const data = snapshot.val();
         var accnt_list = Object.keys(data).length
-        console.log("account list in db call: ", accnt_list)
-        console.log("Get list is done")
+        
 
         return accnt_list
-        // this.setState({accnt_list: accnt_list})
-        // console.log("account state is: " , this.state.accnt_list)
-        // console.log(this.state.accnt_list)
+        
         
     }
 
     async checkAccountList(accnt_list) {
 
     
-        console.log('Starting check')
         for(i = 0; i < accnt_list; i++){
-            console.log("working")
-            console.log(i)
+            
             const accnt_ref = db.ref(`/${this.state.accnt_id}`)
             const act_snapshot = await accnt_ref.once('value')
             let data = act_snapshot.val();   
             if(data == null) {
-                console.log("Does not exist")            
-                // console.log("account num is at first: ", this.state.accnt_num)
+                           
+                
             } else if(data != null) {
-                console.log('Does Exist')
+                
                 this.setState({accnt_exist: true})
                 this.setState({accnt_num: (i)})
                 }
                 break;
             }
-        // console.log("Account num is at: ", this.state.accnt_num)
-        // console.log("Account Exists is at: ", this.state.accnt_exist)
-        console.log("Check is done")
+        
     }
 
     async addAccount() {
-        console.log("starting add")
-        console.log(this.state.accnt_exist)
+        
 
         
 
@@ -322,12 +315,17 @@ export default class Game extends Component {
                 {"Cash": {
                     "money": 0
                 }
+                },
+                {
+                    "HighScore" : {
+                      "HighScore" : 0
+                    }
                 }
             
             ]);
 
         }
-        console.log("Add is done")
+        
     }
 
 
@@ -337,24 +335,20 @@ export default class Game extends Component {
         const data = cash_snapshot.val();
         this.setState({cur_money: data.money})
 
-        // db.ref(`/0/Player/1/Cash`).on('value', (snapshot) => {
-        //     let data = snapshot.val();
-        //     this.setState({cur_money: data.money})
-        // })
+
+    }
+    async retriveHighscore() {
+        const playerRef = db.ref(`/${this.state.accnt_id}/2/HighScore`)
+        const hs_snapshot = await playerRef.once('value')
+        const data = hs_snapshot.val();
+        this.setState({highscore: data.HighScore})
 
 
     }
 
     async getSkins() {
 
-        // PlayerRef.on('value', (snapshot) => {
-        //     let data = snapshot.val();
-        //     var num_items = data[0].Skins.length;
-        //     for(let i=0; i < num_items; i++) {
-        //         var imageKey = this.state.asset_store[i];
-        //         data[0].Skins[i].image = imageKey
-        //     }
-
+        
     
         const playerRef = db.ref(`/${this.state.accnt_id}`)
         const skin_snapshot = await playerRef.once('value')
@@ -381,7 +375,7 @@ export default class Game extends Component {
         const { navigation } = this.props;
         const accnt_id = navigation.getParam('accnt_id','No Results');
         this.setState({accnt_id: accnt_id})
-        console.log(accnt_id);
+        
 
 
         var accnt_list = await this.getAccountList();
@@ -390,6 +384,7 @@ export default class Game extends Component {
         await this.addAccount();
 
         await this.retriveCash();
+        await this.retriveHighscore();
         await this.getSkins();
 
     }
@@ -512,9 +507,9 @@ export default class Game extends Component {
             <ImageBackground source={require('../assets/Candy_assets/PNG/bg.png')} style={styles.backgroundImage}>
 
                 <View style={styles.container}>
-                    <View style={{position:'absolute',top:0,left:'80%',width:100,height:100, backgroundColor:'red'}}>
+                    <View style={{position:'absolute',top:'2%',left:'5%',width:100,height:100, backgroundColor:'red'}}>
                         <Text>Current Score: {this.state.score}</Text>
-                        <Text>High Score: {this.state.score}</Text>
+                        <Text>High Score: {this.state.highscore}</Text>
                     </View>
                     <Image
                         style={{
