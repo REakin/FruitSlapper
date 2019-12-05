@@ -397,8 +397,8 @@ export default class Game extends Component {
 
         return (
             <View style={styles.Store}>
-                <Text> Hello I am a Store</Text>
-                <Text>Current Balance: ${this.state.cur_money}</Text>
+                <Text style={styles.strText}> Hello I am a Store</Text>
+                <Text style={styles.strText}>Current Balance: ${this.state.cur_money}</Text>
 
                 <FlatList
                     style={styles.skin_container}
@@ -486,11 +486,6 @@ export default class Game extends Component {
                     <Text style={styles.btnText}>Close Store</Text>
                 </TouchableOpacity>
 
-                {/* <TouchableOpacity
-                        onPress={this.closeStore.bind(this)}
-                        style={styles.Button}>
-                        <Text style={styles.btnText}>Close Store</Text>
-                </TouchableOpacity> */}
             </View>
 
         )
@@ -505,13 +500,13 @@ export default class Game extends Component {
         let Store = this.state.store ? this.openStore() : null;
         let Candy = this.state.candy ? <Fruit positionChange={this.handlePositionChange}/> : null;
         let Bad_Candy = this.state.bad_candy ? <Bad_Fruit positionChange={this.handlePositionChange}/> : null;
-        let Hand = this.state.hand ? <View style={{height: 50, width: 50, backgroundColor: 'white'}}/> : <View style={{height: 10, width: 10, backgroundColor: 'black'}}/>;
+        //let Hand = this.state.hand ? <View style={{height: 50, width: 50, backgroundColor: 'white'}}/> : <View style={{height: 10, width: 10, backgroundColor: 'black'}}/>;
 
         return (
             <ImageBackground source={require('../assets/Candy_assets/PNG/bg.png')} style={styles.backgroundImage}>
 
                 <View style={styles.container}>
-                    <View style={{position:'absolute',top:'2%',left:'5%',width:100,height:100, backgroundColor:'red'}}>
+                    <View style={styles.HS}>
                         <Text>Current Score: {this.state.score}</Text>
                         <Text>High Score: {this.state.highscore}</Text>
                     </View>
@@ -527,7 +522,7 @@ export default class Game extends Component {
                         }}
                         source={this.state.current_skin}
                     />
-                    {Hand}
+                    
                     {Candy}
                     {Bad_Candy}
                     {Menu}
@@ -548,6 +543,19 @@ const styles = StyleSheet.create({
         flex: 1,
         marginTop: 50,
         backgroundColor: '#F5FCFF',
+    },
+    HS: {
+        flex: 1,
+        position: 'absolute',
+        left: '10%',
+        bottom: '5%',
+        opacity: 0.8,
+        width: 100,
+        height: 100,
+        backgroundColor: 'green',
+        borderWidth: 4,
+        borderColor: 'blue',
+        borderRadius: 10
     },
     Store: {
         flex: 1,
@@ -570,6 +578,19 @@ const styles = StyleSheet.create({
         height: 60,
         alignItems: 'center',
         justifyContent: 'center',
+    },
+    strText: {
+        fontSize: 24,
+        opacity: 1,
+        backgroundColor: '#84BCE8',
+        width: '100%',
+        color: 'black',
+        alignItems: 'center',
+        justifyContent: 'center',
+        textAlign: 'center',
+        borderColor: 'black',
+        borderRadius: 12,
+        borderWidth: 4,
     },
 
     btnText: {
