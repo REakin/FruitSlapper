@@ -36,6 +36,10 @@ export default class Game extends Component {
             hand:false,
             bgPic:'',
             handpic:'',
+            container: {
+                top: require('../assets/Candy_assets/PNG/top.png'),
+                bottom: require('../assets/Candy_assets/PNG/bottom.png')
+            },
             current_skin: require("../assets/Monster_assets/Skins/1.png"),
             character_visible: 0,
             cur_money: 0,
@@ -328,7 +332,7 @@ export default class Game extends Component {
     }
 
 
-    async retriveCash() {
+    async retrieveCash() {
         const playerRef = db.ref(`/${this.state.accnt_id}/1/Cash`)
         const cash_snapshot = await playerRef.once('value')
         const data = cash_snapshot.val();
@@ -336,7 +340,7 @@ export default class Game extends Component {
 
 
     }
-    async retriveHighscore() {
+    async retrieveHighscore() {
         const playerRef = db.ref(`/${this.state.accnt_id}/2/HighScore`)
         const hs_snapshot = await playerRef.once('value')
         const data = hs_snapshot.val();
@@ -382,8 +386,8 @@ export default class Game extends Component {
         await this.checkAccountList(accnt_list);
         await this.addAccount();
 
-        await this.retriveCash();
-        await this.retriveHighscore();
+        await this.retrieveCash();
+        await this.retrieveHighscore();
         await this.getSkins();
 
     }
@@ -499,7 +503,7 @@ export default class Game extends Component {
         let Store = this.state.store ? this.openStore() : null;
         let Candy = this.state.candy ? <Fruit positionChange={this.handlePositionChange}/> : null;
         let Bad_Candy = this.state.bad_candy ? <Bad_Fruit positionChange={this.handlePositionChange}/> : null;
-        //let Hand = this.state.hand ? <View style={{height: 50, width: 50, backgroundColor: 'white'}}/> : <View style={{height: 10, width: 10, backgroundColor: 'black'}}/>;
+        // let Hand = this.state.hand ? <View style={{height: 50, width: 50, backgroundColor: 'white'}}/> : <View style={{height: 10, width: 10, backgroundColor: 'black'}}/>;
 
         return (
             <ImageBackground source={require('../assets/Candy_assets/PNG/bg.png')} style={styles.backgroundImage}>
